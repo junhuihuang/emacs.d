@@ -1,4 +1,7 @@
 (global-linum-mode t)
+  ; stevens add
+  ; (setq linum-format "%4d\u2502")
+  (setq linum-format "%4d ")
 
 ;http://stackoverflow.com/questions/3875213/ \
 ;turning-on-linum-mode-when-in-python-c-mode

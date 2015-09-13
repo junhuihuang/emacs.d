@@ -26,6 +26,10 @@
 (global-evil-surround-mode 1)
 ;; }}
 
+;; press ";" instead of ":"
+;; stevens
+;; (define-key evil-normal-state-map (kbd ";") 'evil-ex)
+
 (require 'evil-mark-replace)
 
 ;; {{ define my own text objects, works on evil v1.0.9 using older method
@@ -435,6 +439,7 @@
   "hv" 'describe-variable
   "gt" 'ggtags-find-tag-dwim
   "gr" 'ggtags-find-reference
+  "gp" 'ggtags-prev-mark ; stevens
   "fb" 'flyspell-buffer
   "fe" 'flyspell-goto-next-error
   "fa" 'flyspell-auto-correct-word

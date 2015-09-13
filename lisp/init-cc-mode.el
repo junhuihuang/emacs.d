@@ -5,19 +5,20 @@
       'c-basic-offset
       (c-lineup-topmost-intro-cont langelem))))
 
-;; avoid default "gnu" style, use more popular one
-(setq c-default-style "linux")
 
-(defun fix-c-indent-offset-according-to-syntax-context (key val)
-  ;; remove the old element
-  (setq c-offsets-alist (delq (assoc key c-offsets-alist) c-offsets-alist))
-  ;; new value
-  (add-to-list 'c-offsets-alist '(key . val)))
-
-(defun my-common-cc-mode-setup ()
-  "setup shared by all languages (java/groovy/c++ ...)"
+;C/C++ SECTION
+(defun my-c-mode-hook ()
+  (message "my-c-mode-hook called (buffer-file-name)=%s" (buffer-file-name))
+  ;; @see http://stackoverflow.com/questions/3509919/ \
+  ;; emacs-c-opening-corresponding-header-file
+  (local-set-key (kbd "C-x C-o") 'ff-find-other-file)
+  (local-set-key "\M-f" 'c-forward-into-nomenclature)
+  (local-set-key "\M-b" 'c-backward-into-nomenclature)
+  ;; stevens
+  (setq cc-search-directories '("." "../*/src" "../*/source" "../*/include" "../*/inc" "/usr/include" "/usr/local/include/*" "$WXWIN/include"))
   (setq c-basic-offset 4)
-  ;; give me NO newline automatically after electric expressions are entered
+  (setq c-style-variables-are-local-p nil)
+  ;give me NO newline automatically after electric expressions are entered
   (setq c-auto-newline nil)
 
   ; @see http://xugx2007.blogspot.com.au/2007/06/benjamin-rutts-emacs-c-development-tips.html
@@ -35,65 +36,85 @@
               (message "NO COMPILATION ERRORS!")
               ))))
 
-  ;; syntax-highlight aggressively
-  ;; (setq font-lock-support-mode 'lazy-lock-mode)
+  ;if (0)          becomes        if (0)
+  ;    {                          {
+  ;       ;                           ;
+  ;    }                          }
+  (c-set-offset 'substatement-open 0)
+
+  ;first arg of arglist to functions: tabbed in once
+  ;(default was c-lineup-arglist-intro-after-paren)
+  (c-set-offset 'arglist-intro '+)
+
+  ;second line of arglist to functions: tabbed in once
+  ;(default was c-lineup-arglist)
+  (c-set-offset 'arglist-cont-nonempty '+)
+
+  ;switch/case:  make each case line indent from switch
+  (c-set-offset 'case-label '+)
+
+  ;make the ENTER key indent next line properly
+  (local-set-key "\C-m" 'newline-and-indent)
+
+  ;syntax-highlight aggressively
+  ;(setq font-lock-support-mode 'lazy-lock-mode)
   (setq lazy-lock-defer-contextually t)
   (setq lazy-lock-defer-time 0)
 
   ;make DEL take all previous whitespace with it
   (c-toggle-hungry-state 1)
 
-  ;; indent
-  (fix-c-indent-offset-according-to-syntax-context 'substatement 0)
-  (fix-c-indent-offset-according-to-syntax-context 'func-decl-cont 0))
+  ;make open-braces after a case: statement indent to 0 (default was '+)
+  (c-set-offset 'statement-case-open 0)
 
-(defun my-c-mode-setup ()
-  "C/C++ only setup"
-  (message "my-c-mode-setup called (buffer-file-name)=%s" (buffer-file-name))
-  ;; @see http://stackoverflow.com/questions/3509919/ \
-  ;; emacs-c-opening-corresponding-header-file
-  (local-set-key (kbd "C-x C-o") 'ff-find-other-file)
-
-  (setq cc-search-directories '("." "/usr/include" "/usr/local/include/*" "../*/include" "$WXWIN/include"))
-
-  ;; wxWidgets setup
-  (c-set-offset 'topmost-intro-cont 'c-wx-lineup-topmost-intro-cont)
-
-  ;; make a #define be left-aligned
+  ;make a #define be left-aligned
   (setq c-electric-pound-behavior (quote (alignleft)))
 
-  (autoload 'c-turn-on-eldoc-mode "c-eldoc" "" t)
+  ;wxwdigets stuff
+  (c-set-offset 'topmost-intro-cont 'c-wx-lineup-topmost-intro-cont)
+
+  ;do not impose restriction that all lines not top-level be indented at least
+  ;1 (was imposed by gnu style by default)
+  (setq c-label-minimum-indentation 0)
 
   (when buffer-file-name
-    ;; c-eldoc (https://github.com/mooz/c-eldoc)
-    (c-turn-on-eldoc-mode)
+    (require 'fic-mode)
+    (add-hook 'c++-mode-hook 'turn-on-fic-mode)
 
     ;; @see https://github.com/redguardtoo/cpputils-cmake
     ;; Make sure your project use cmake!
     ;; Or else, you need comment out below code:
     ;; {{
-    (flymake-mode 1)
-    (if (executable-find "cmake")
-        (if (not (or (string-match "^/usr/local/include/.*" buffer-file-name)
-                     (string-match "^/usr/src/linux/include/.*" buffer-file-name)))
-            (cppcm-reload-all)))
+    ;; stevens disable
+    ;; (flymake-mode 1)
+    ;; (if (executable-find "cmake")
+    ;;     (if (not (or (string-match "^/usr/local/include/.*" buffer-file-name)
+    ;;                  (string-match "^/usr/src/linux/include/.*" buffer-file-name)))
+    ;;         (cppcm-reload-all)))
     ;; }}
 
     ))
 
+(defun fix-c-indent-offset-according-to-syntax-context (key val)
+  ;; remove the old element
+  (setq c-offsets-alist (delq (assoc key c-offsets-alist) c-offsets-alist))
+  ;; new value
+  (add-to-list 'c-offsets-alist '(key . val)))
+
 ;; donot use c-mode-common-hook or cc-mode-hook because many major-modes use this hook
 (add-hook 'c-mode-common-hook
           (lambda ()
-            (unless (is-buffer-file-temp)
+            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+              ;; indent
+              (fix-c-indent-offset-according-to-syntax-context 'substatement 0)
+              (fix-c-indent-offset-according-to-syntax-context 'func-decl-cont 0)
+
               ;; gtags (GNU global) stuff
               (setq gtags-suggested-key-mapping t)
-              (my-common-cc-mode-setup)
-              (unless (or (derived-mode-p 'java-mode) (derived-mode-p 'groovy-mode))
-                (my-c-mode-setup))
-              (ggtags-mode 1)
-              ;; emacs 24.4+ will set up eldoc automatically.
-              ;; so below code is NOT needed.
-              (setq-local eldoc-documentation-function #'ggtags-eldoc-function)
-              )))
+              (if *emacs24* (ggtags-mode 1)))
+            (if (and (derived-mode-p 'c-mode 'c++-mode)
+                     (not (is-buffer-file-temp)))
+              (my-c-mode-hook))
+            ))
 
 (provide 'init-cc-mode)

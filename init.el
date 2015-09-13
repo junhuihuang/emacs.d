@@ -33,7 +33,6 @@ We increase this to 16MB by `(my-optimize-gc 16 0.5)` "
   (setq-default gc-cons-threshold (* 1024 1024 NUM)
                 gc-cons-percentage PER))
 
-
 (require 'init-modeline)
 (require 'cl-lib)
 (require 'init-compat)
@@ -72,7 +71,8 @@ We increase this to 16MB by `(my-optimize-gc 16 0.5)` "
 (require 'init-hippie-expand)
 (require 'init-windows)
 (require 'init-sessions)
-(require 'init-git)
+;; stevens disable
+;; (require 'init-git)
 (require 'init-crontab)
 (require 'init-markdown)
 (require 'init-erlang)
@@ -107,10 +107,12 @@ We increase this to 16MB by `(my-optimize-gc 16 0.5)` "
 (require 'init-slime)
 (require 'init-clipboard)
 (require 'init-company)
-(require 'init-chinese-pyim) ;; cannot be idle-required
+;; stevens disable
+;; (require 'init-chinese-pyim) ;; cannot be idle-required
 ;; need statistics of keyfreq asap
 (require 'init-keyfreq)
-(require 'init-httpd)
+;; stevens disable
+;; (require 'init-httpd)
 
 ;; projectile costs 7% startup time
 

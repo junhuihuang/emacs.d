@@ -284,7 +284,8 @@ ARCHIVE is the string name of the package archive.")
 ;; I don't use multiple-cursors, but js2-refactor requires it
 (require-package 'multiple-cursors)
 (require-package 'tagedit)
-(require-package 'git-link)
+;; stevens disable
+;; (require-package 'git-link)
 (require-package 'yasnippet)
 (require-package 'company)
 (require-package 'company-c-headers)
@@ -301,6 +302,8 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'quack) ;; for scheme
 (require-package 'anaconda-mode)
 (require-package 'company-anaconda)
+;; stevens add
+(require-package 'projectile)
 
 
 ;; (require-package 'command-frequency)
