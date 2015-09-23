@@ -366,7 +366,7 @@
 (define-key evil-insert-state-map "\C-t" 'evil-shift-right-line)
 (define-key evil-insert-state-map "\C-d" 'evil-shift-left-line)
 ;;; (define-key evil-insert-state-map "\C-a" 'evil-paste-last-insertion)
-(define-key evil-insert-state-map "\C-a" 'move-beginning-of-line)
+(define-key evil-insert-state-map "\C-a" 'evil-first-non-blank)
 (define-key evil-insert-state-map [remap delete-backward-char] 'evil-delete-backward-char-and-join)
 (define-key evil-insert-state-map [delete] 'delete-char)
 (define-key evil-insert-state-map [escape] 'evil-normal-state)
