@@ -3,12 +3,12 @@
   ; (setq linum-format "%4d\u2502")
   (setq linum-format "%4d ")
 
-;http://stackoverflow.com/questions/3875213/ \
-;turning-on-linum-mode-when-in-python-c-mode
+;; http://stackoverflow.com/questions/3875213/turning-on-linum-mode-when-in-python-c-mode
 (setq linum-mode-inhibit-modes-list '(eshell-mode
                                       shell-mode
                                       dictionary-mode
                                       erc-mode
+                                      browse-kill-ring-mode
                                       etags-select-mode
                                       dired-mode
                                       help-mode

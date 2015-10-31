@@ -12,7 +12,6 @@
     (with-current-buffer (find-file-existing path)
       (kill-buffer nil))))
 
-
 ;;------------------------------------------------------------------------------
 ;; Add support to package.el for pre-filtering available packages
 ;;------------------------------------------------------------------------------
@@ -86,6 +85,7 @@ ARCHIVE is the string name of the package archive.")
     simple-httpd
     dsvn
     move-text
+    string-edit ; looks magnars don't update stable tag frequently
     findr
     mwe-log-commands
     dired-details
@@ -123,8 +123,6 @@ ARCHIVE is the string name of the package archive.")
     fakir
     erlang
     company-c-headers
-    company-anaconda
-    anaconda-mode
     ;; make all the color theme packages available
     afternoon-theme
     define-word
@@ -153,7 +151,6 @@ ARCHIVE is the string name of the package archive.")
     color-theme-solarized
     colorsarenice-theme
     cyberpunk-theme
-    expand-region
     dakrone-theme
     darcula-theme
     dark-krystal-theme
@@ -204,7 +201,7 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'color-theme)
 (require-package 'auto-compile)
 (require-package 'avy)
-(require-package 'expand-region) ;; use latest version if possible
+(require-package 'expand-region) ;; I prefer stable version
 (require-package 'fringe-helper)
 (require-package 'haskell-mode)
 (require-package 'gitignore-mode)
@@ -241,9 +238,9 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'exec-path-from-shell)
 (require-package 'flymake-css)
 (require-package 'flymake-jslint)
-(require-package 'flymake-python-pyflakes)
 (require-package 'flymake-ruby)
 (require-package 'flymake-sass)
+(require-package 'elpy)
 (require-package 'hl-sexp)
 (require-package 'ibuffer-vc)
 (require-package 'less-css-mode)
@@ -284,8 +281,8 @@ ARCHIVE is the string name of the package archive.")
 ;; I don't use multiple-cursors, but js2-refactor requires it
 (require-package 'multiple-cursors)
 (require-package 'tagedit)
-;; stevens disable
-;; (require-package 'git-link)
+(require-package 'git-link)
+(require-package 'cliphist)
 (require-package 'yasnippet)
 (require-package 'company)
 (require-package 'company-c-headers)
@@ -295,17 +292,11 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'guide-key)
 (require-package 'fakir)
 (require-package 'simple-httpd)
+(require-package 'git-messenger)
 (require-package 'git-gutter)
 (require-package 'flx-ido)
 (require-package 'neotree)
 (require-package 'define-word)
 (require-package 'quack) ;; for scheme
-(require-package 'anaconda-mode)
-(require-package 'company-anaconda)
-;; stevens add
-(require-package 'projectile)
-
-
-;; (require-package 'command-frequency)
 
 (provide 'init-elpa)

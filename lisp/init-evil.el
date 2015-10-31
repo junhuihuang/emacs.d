@@ -11,6 +11,16 @@
      ;; force update evil keymaps after git-timemachine-mode loaded
      (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)))
 
+(eval-after-load 'browse-kill-ring
+  '(progn
+     (evil-make-overriding-map browse-kill-ring-mode-map 'normal)
+     (add-hook 'browse-kill-ring-mode-hook #'evil-normalize-keymaps)))
+
+(eval-after-load 'etags-select
+  '(progn
+     (evil-make-overriding-map etags-select-mode-map 'normal)
+     (add-hook 'etags-select-mode-hook #'evil-normalize-keymaps)))
+
 (require 'evil)
 
 ;; @see https://bitbucket.org/lyro/evil/issue/342/evil-default-cursor-setting-should-default
@@ -54,6 +64,7 @@
 ;; angular template
 (define-and-bind-text-object "r" "\{\{" "\}\}")
 ;; }}
+
 
 ;; {{ nearby file path as text object,
 ;;      - "vif" to select only basename
@@ -194,6 +205,11 @@
 (evil-escape-mode 1)
 ;; }}
 
+;; {{ evil-space
+(require 'evil-space)
+(evil-space-mode)
+;; }}
+
 ;; Move back the cursor one position when exiting insert mode
 (setq evil-move-cursor-back t)
 
@@ -205,15 +221,18 @@
     ))
 
 ;; (evil-set-initial-state 'org-mode 'emacs)
-;; Remap org-mode meta keys for convenience
+
+;; As a general RULE, mode specific evil leader keys started
+;; with uppercased character or 'g' or special character except "=" and "-"
 (evil-declare-key 'normal org-mode-map
   "gh" 'outline-up-heading
   "gl" 'outline-next-visible-heading
+  "S" 'org-store-link
+  "A" 'org-agenda
   "H" 'org-beginning-of-line ; smarter behaviour on headlines etc.
   "L" 'org-end-of-line ; smarter behaviour on headlines etc.
   "$" 'org-end-of-line ; smarter behaviour on headlines etc.
   "^" 'org-beginning-of-line ; ditto
-  "-" 'org-ctrl-c-minus ; change bullet style
   "<" 'org-metaleft ; out-dent
   ">" 'org-metaright ; indent
   (kbd "TAB") 'org-cycle)
@@ -249,10 +268,15 @@
         (speedbar-mode . emacs)
         (magit-commit-mode . normal)
         (magit-diff-mode . normal)
+        (browse-kill-ring-mode . normal)
+        (etags-select-mode . normal)
         (js2-error-buffer-mode . emacs)
         )
       do (evil-set-initial-state mode state))
 
+;; I prefer Emacs way after pressing ":" in evil-mode
+(define-key evil-ex-completion-map (kbd "C-a") 'move-beginning-of-line)
+(define-key evil-ex-completion-map (kbd "C-b") 'backward-char)
 (define-key evil-ex-completion-map (kbd "M-p") 'previous-complete-history-element)
 (define-key evil-ex-completion-map (kbd "M-n") 'next-complete-history-element)
 
@@ -272,7 +296,9 @@
 ;; press ",xx" to expand region
 ;; then press "z" to contract, "x" to expand
 (eval-after-load "evil"
-  '(setq expand-region-contract-fast-key "z"))
+  '(progn
+     (setq expand-region-contract-fast-key "z")
+     ))
 
 ;; I learn this trick from ReneFroger, need latest expand-region
 ;; @see https://github.com/redguardtoo/evil-matchit/issues/38
@@ -287,6 +313,10 @@
 (setq evil-leader/leader ",")
 (require 'evil-leader)
 (evil-leader/set-key
+  ;; {{ only usable in GUI emacs
+  "=" 'increase-default-font-height
+  "-" 'decrease-default-font-height
+  ;; }}
   "bf" 'beginning-of-defun
   "bu" 'backward-up-list
   "bb" 'back-to-previous-buffer
@@ -338,9 +368,9 @@
   "rb" 'evilmr-replace-in-buffer
   "tt" 'evilmr-tag-selected-region ;; recommended
   "rt" 'evilmr-replace-in-tagged-region ;; recommended
-  "yy" 'cb-switch-between-controller-and-view
   "tua" 'artbollocks-mode
-  "yu" 'cb-get-url-from-controller
+  "cby" 'cb-switch-between-controller-and-view
+  "cbu" 'cb-get-url-from-controller
   "ht" 'etags-select-find-tag-at-point ;; better than find-tag (C-])
   "hp" 'etags-select-find-tag
   "hm" 'helm-bookmarks
@@ -376,8 +406,9 @@
   "ov" 'my-overview-of-current-buffer
   "or" 'open-readme-in-git-root-directory
   "c$" 'org-archive-subtree ; `C-c $'
-  "c<" 'org-promote-subtree ; `C-c C-<'
-  "c>" 'org-demote-subtree ; `C-c C->'
+  ;; org-do-demote/org-do-premote support selected region
+  "c<" 'org-do-promote ; `C-c C-<'
+  "c>" 'org-do-demote ; `C-c C->'
   "cam" 'org-tags-view ; `C-c a m': search items in org-file-apps by tag
   "cxi" 'org-clock-in ; `C-c C-x C-i'
   "cxo" 'org-clock-out ; `C-c C-x C-o'
@@ -531,6 +562,8 @@
   "xvl" 'vc-print-log
   "xvb" 'git-messenger:popup-message
   "xv=" 'git-gutter:popup-hunk
+  "yy" 'cliphist-paste-item
+  "yu" 'cliphist-select-item
   "nn" 'my-goto-next-hunk
   "pp" 'my-goto-previous-hunk
   "xnn" 'narrow-or-widen-dwim
