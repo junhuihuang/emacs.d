@@ -374,7 +374,6 @@
   "ht" 'etags-select-find-tag-at-point ;; better than find-tag (C-])
   "hp" 'etags-select-find-tag
   "hm" 'helm-bookmarks
-  "hb" 'helm-back-to-last-point
   "hh" 'browse-kill-ring
   "cg" 'helm-ls-git-ls
   "ud" 'my-gud-gdb
@@ -430,7 +429,7 @@
   "di" 'evilmi-delete-items
   "si" 'evilmi-select-items
   "jb" 'js-beautify
-  "jp" 'jsons-print-path
+  "jpp" 'js2-print-json-path
   "se" 'string-edit-at-point
   "xe" 'eval-last-sexp
   "x0" 'delete-window

@@ -75,7 +75,6 @@ ARCHIVE is the string name of the package archive.")
 ;; Feel free to add more packages!
 (defvar melpa-include-packages
   '(bbdb
-    json-rpc
     kv
     color-theme
     wgrep
@@ -114,7 +113,6 @@ ARCHIVE is the string name of the package archive.")
     dropdown-list
     lua-mode
     pomodoro
-    helm
     auto-compile
     packed
     gitconfig-mode
@@ -240,6 +238,7 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'flymake-jslint)
 (require-package 'flymake-ruby)
 (require-package 'flymake-sass)
+(require-package 'find-file-in-project)
 (require-package 'elpy)
 (require-package 'hl-sexp)
 (require-package 'ibuffer-vc)
@@ -274,7 +273,6 @@ ARCHIVE is the string name of the package archive.")
 ;; C-x r l to list bookmarks
 (require-package 'bookmark+)
 (require-package 'multi-term)
-(require-package 'json-mode)
 (require-package 'js2-mode)
 (require-package 's)
 ;; js2-refactor requires js2, dash, s, multiple-cursors, yasnippet

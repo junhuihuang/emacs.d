@@ -113,6 +113,7 @@ We increase this to 16MB by `(my-optimize-gc 16 0.5)` "
 (require 'init-keyfreq)
 ;; stevens disable
 ;; (require 'init-httpd)
+(require 'init-highlight-windows)
 
 ;; projectile costs 7% startup time
 
