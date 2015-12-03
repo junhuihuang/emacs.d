@@ -114,6 +114,7 @@ We increase this to 16MB by `(my-optimize-gc 16 0.5)` "
 ;; stevens disable
 ;; (require 'init-httpd)
 (require 'init-highlight-windows)
+(require 'helm-swoop)
 
 ;; projectile costs 7% startup time
 
