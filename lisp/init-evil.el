@@ -424,7 +424,7 @@
   "gsh" 'git-gutter-reset-to-head-parent
   "gsr" 'git-gutter-reset-to-default
   "hr" 'helm-recentf
-  "ho" 'helm-occur
+  "ho" 'helm-swoop
   "he" 'helm-resume
   "xc" 'save-buffers-kill-terminal
   "rr" 'steve-ido-choose-from-recentf ;; more quick than helm
