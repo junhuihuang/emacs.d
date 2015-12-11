@@ -114,7 +114,6 @@ We increase this to 16MB by `(my-optimize-gc 16 0.5)` "
 ;; stevens disable
 ;; (require 'init-httpd)
 (require 'init-highlight-windows)
-(require 'helm-swoop)
 
 ;; projectile costs 7% startup time
 
@@ -160,6 +159,7 @@ We increase this to 16MB by `(my-optimize-gc 16 0.5)` "
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks")
  '(safe-local-variable-values (quote ((lentic-init . lentic-orgel-org-init))))
  '(session-use-package t nil (session)))
 (custom-set-faces

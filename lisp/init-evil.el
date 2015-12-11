@@ -289,6 +289,9 @@
 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 (define-key evil-normal-state-map (kbd "C-]") 'etags-select-find-tag-at-point)
 (define-key evil-visual-state-map (kbd "C-]") 'etags-select-find-tag-at-point)
+;; add by stevens
+(define-key evil-normal-state-map (kbd "C-n") 'next-error)
+(define-key evil-normal-state-map (kbd "C-p") 'previous-error)
 
 (require 'evil-matchit)
 (global-evil-matchit-mode 1)
