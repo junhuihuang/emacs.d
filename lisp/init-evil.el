@@ -400,6 +400,8 @@
   "im" 'helm-imenu
   "ii" 'ido-imenu
   "ij" 'rimenu-jump
+  "io" 'swiper
+  "ie" 'ivy-resume
   "." 'evil-ex
   ;; @see https://github.com/pidu/git-timemachine
   ;; p: previous; n: next; w:hash; W:complete hash; g:nth version; q:quit

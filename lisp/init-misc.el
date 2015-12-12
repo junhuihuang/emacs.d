@@ -524,4 +524,7 @@ If step is -1, go backward."
     ;; (message "rlt=%s found=%s" rlt found)
     (goto-char rlt)))
 ;; }}
+;; add by stevens
+(setq helm-swoop-split-with-multiple-windows t)
 (provide 'init-misc)
+
