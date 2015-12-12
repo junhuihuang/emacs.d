@@ -525,6 +525,11 @@ If step is -1, go backward."
     (goto-char rlt)))
 ;; }}
 ;; add by stevens
+(require 'helm-swoop)
 (setq helm-swoop-split-with-multiple-windows t)
+(require 'swiper)
+(setq ivy-wrap t)
+(setq ivy-count-format "%d/%d")
+
 (provide 'init-misc)
 
