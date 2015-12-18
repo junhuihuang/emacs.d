@@ -313,6 +313,8 @@
 (global-set-key (kbd "C-r") 'undo-tree-redo)
 
 ;; My frequently used commands are listed here
+;; For example, for line like `"ef" 'end-of-defun`
+;;   You can either press `,ef` or `M-x end-of-defun` to execute it
 (setq evil-leader/leader ",")
 (require 'evil-leader)
 (evil-leader/set-key
@@ -336,7 +338,6 @@
   "em" 'erase-message-buffer
   "eb" 'eval-buffer
   "sd" 'sudo-edit
-  "sr" 'evil-surround-region
   "sc" 'shell-command
   "ee" 'eval-expression
   "aa" 'copy-to-x-clipboard ; used frequently
@@ -358,7 +359,8 @@
   "ff" 'toggle-full-window ;; I use WIN+F in i3
   "ip" 'find-file-in-project
   "kk" 'find-file-in-project-by-selected
-  "tm" 'get-term
+  "fd" 'find-directory-in-project-by-selected
+  "trm" 'get-term
   "tff" 'toggle-frame-fullscreen
   "tfm" 'toggle-frame-maximized
   ;; "ci" 'evilnc-comment-or-uncomment-lines
@@ -377,8 +379,15 @@
   "ht" 'etags-select-find-tag-at-point ;; better than find-tag (C-])
   "hp" 'etags-select-find-tag
   "hm" 'helm-bookmarks
-  "hh" 'browse-kill-ring
-  "cg" 'helm-ls-git-ls
+  "yy" 'browse-kill-ring
+  "gf" 'counsel-git-find-file
+  "gl" 'counsel-git-grep-yank-line
+  "gg" 'counsel-git-grep ; quickest grep should be easy to press
+  "gm" 'counsel-git-find-my-file
+  "rjs" 'run-js
+  "rmz" 'run-mozilla
+  "rpy" 'run-python
+  "rlu" 'run-lua
   "ud" 'my-gud-gdb
   "uk" 'gud-kill-yes
   "ur" 'gud-remove
@@ -391,6 +400,7 @@
   "ui" 'gud-stepi
   "uc" 'gud-cont
   "uf" 'gud-finish
+  "tci" 'toggle-company-ispell
   "kb" 'kill-buffer-and-window ;; "k" is preserved to replace "C-g"
   "it" 'issue-tracker-increment-issue-id-under-cursor
   "ls" 'highlight-symbol
@@ -405,7 +415,7 @@
   "." 'evil-ex
   ;; @see https://github.com/pidu/git-timemachine
   ;; p: previous; n: next; w:hash; W:complete hash; g:nth version; q:quit
-  "gm" 'git-timemachine-toggle
+  "tmt" 'git-timemachine-toggle
   ;; toggle overview,  @see http://emacs.wordpress.com/2007/01/16/quick-and-dirty-code-folding/
   "ov" 'my-overview-of-current-buffer
   "or" 'open-readme-in-git-root-directory
@@ -424,7 +434,7 @@
   "sj" 'w3m-search-js-api-mdn
   "sa" 'w3m-java-search
   "sh" 'w3mext-hacker-search ; code search in all engines with firefox
-  "gg" 'my-vc-git-grep
+  "qq" 'my-grep
   "gss" 'git-gutter:set-start-revision
   "gsh" 'git-gutter-reset-to-head-parent
   "gsr" 'git-gutter-reset-to-default
@@ -432,7 +442,9 @@
   "ho" 'helm-swoop
   "he" 'helm-resume
   "xc" 'save-buffers-kill-terminal
-  "rr" 'steve-ido-choose-from-recentf ;; more quick than helm
+  "rr" (lambda () (interactive)
+         (unless recentf-mode (recentf-mode 1))
+         (ivy-recentf)) ; more quick than helm
   "di" 'evilmi-delete-items
   "si" 'evilmi-select-items
   "jb" 'js-beautify
@@ -522,6 +534,7 @@
   "vv" 'scroll-other-window
   "vu" 'scroll-other-window-up
   "jde" 'js2-display-error-list
+  "jne" 'js2-next-error
   "jte" 'js2-mode-toggle-element
   "jtf" 'js2-mode-toggle-hide-functions
   "jjeo" 'js2r-expand-object
@@ -568,7 +581,7 @@
   "xvl" 'vc-print-log
   "xvb" 'git-messenger:popup-message
   "xv=" 'git-gutter:popup-hunk
-  "yy" 'cliphist-paste-item
+  "hh" 'cliphist-paste-item
   "yu" 'cliphist-select-item
   "nn" 'my-goto-next-hunk
   "pp" 'my-goto-previous-hunk

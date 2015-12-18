@@ -16,6 +16,8 @@
                                       fundamental-mode
                                       jabber-roster-mode
                                       jabber-chat-mode
+                                      inferior-js-mode
+                                      inferior-python-mode
                                       inferior-scheme-mode
                                       twittering-mode
                                       compilation-mode

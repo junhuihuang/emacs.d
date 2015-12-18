@@ -66,7 +66,7 @@ ARCHIVE is the string name of the package archive.")
 ;; Un-comment below line if you download zip file
 ;; from https://github.com/redguardtoo/myelpa/archive/master.zip
 ;; and extract its content into ~/myelpa/
-;; (setq package-archives '(("myelpa" . "~/projs/myelpa")))
+;; (setq package-archives '(("myelpa" . "~/myelpa")))
 
 ;; Or Un-comment below line if you prefer installing package from https://github.com/redguardtoo/myelpa/ directly
 ;; (setq package-archives '(("myelpa" . "https://raw.github.com/redguardtoo/myelpa/master/")))
@@ -87,7 +87,6 @@ ARCHIVE is the string name of the package archive.")
     string-edit ; looks magnars don't update stable tag frequently
     findr
     mwe-log-commands
-    dired-details
     yaml-mode
     noflet
     db
@@ -98,7 +97,6 @@ ARCHIVE is the string name of the package archive.")
     pointback
     buffer-move
     regex-tool
-    csharp-mode
     quack
     legalese
     htmlize
@@ -215,6 +213,7 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'erlang)
 (require-package 'findr)
 (require-package 'jump)
+(require-package 'nvm)
 (require-package 'writeroom-mode)
 (require-package 'haml-mode)
 (require-package 'sass-mode)
@@ -239,6 +238,7 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'flymake-jslint)
 (require-package 'flymake-ruby)
 (require-package 'flymake-sass)
+(require-package 'swiper)
 (require-package 'find-file-in-project)
 (require-package 'elpy)
 (require-package 'hl-sexp)
@@ -252,7 +252,6 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'rinari)
 (require-package 'groovy-mode)
 (require-package 'ruby-compilation)
-(require-package 'csharp-mode)
 (require-package 'emmet-mode)
 (require-package 'session)
 ;; (require-package 'tidy)
@@ -287,7 +286,6 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'company-c-headers)
 (require-package 'legalese)
 (require-package 'string-edit)
-(require-package 'dired-details)
 (require-package 'guide-key)
 (require-package 'fakir)
 (require-package 'simple-httpd)

@@ -19,7 +19,7 @@
         ("State" "[. \t]state([ \t]*['\"]\\([^'\"]+\\)" 1)
         ("Factory" "[. \t]factory([ \t]*['\"]\\([^'\"]+\\)" 1)
         ("Service" "[. \t]service([ \t]*['\"]\\([^'\"]+\\)" 1)
-        ("Module" "[. \t]module([ \t]*['\"]\\([a-zA-Z0-9_\.]+\\)" 1)
+        ("Module" "[. \t]module( *['\"]\\([a-zA-Z0-9_.]+\\)['\"], *\\[" 1)
         ("ngRoute" "[. \t]when(\\(['\"][a-zA-Z0-9_\/]+['\"]\\)" 1)
         ("Directive" "[. \t]directive([ \t]*['\"]\\([^'\"]+\\)" 1)
         ("Event" "[. \t]\$on([ \t]*['\"]\\([^'\"]+\\)" 1)
@@ -249,7 +249,6 @@ If HARDCODED-ARRAY-INDEX provided, array index in JSON path is replaced with it.
 (defun my-js2-mode-setup()
   (unless (is-buffer-file-temp)
     ;; looks nodejs is more popular
-    (setq inferior-js-program-command "node --interactive")
     (require 'js-comint)
     ;; if use node.js we need nice output
     (setenv "NODE_NO_READLINE" "1")
@@ -282,9 +281,6 @@ If HARDCODED-ARRAY-INDEX provided, array index in JSON path is replaced with it.
 
 (add-hook 'coffee-mode-hook 'flymake-coffee-load)
 
-;; @see https://github.com/Sterlingg/json-snatcher
-(autoload 'jsons-print-path "json-snatcher" nil t)
-
 ;; {{ js-beautify
 (defun js-beautify ()
   "Beautify a region of javascript using the code from jsbeautify.org.
@@ -303,7 +299,7 @@ sudo pip install jsbeautifier"
     (goto-char orig-point)))
 ;; }}
 
-(setq-default js2-global-externs
+(setq-default js2-additional-externs
               '("$"
                 "AccessifyHTML5"
                 "KeyEvent"
@@ -312,11 +308,15 @@ sudo pip install jsbeautifier"
                 "angular"
                 "app"
                 "beforeEach"
+                "browser"
+                "by"
                 "clearInterval"
                 "clearTimeout"
                 "define"
                 "describe"
+                "element"
                 "expect"
+                "gBrowser" ; Keysnail
                 "inject"
                 "it"
                 "jQuery"
@@ -328,6 +328,7 @@ sudo pip install jsbeautifier"
                 "require"
                 "setInterval"
                 "setTimeout"
+                "tileTabs" ; Firefox addon
                 "utag"))
 
 (provide 'init-javascript)

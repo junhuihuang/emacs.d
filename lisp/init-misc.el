@@ -1,10 +1,37 @@
+;; {{ swiper&ivy-mode
+(autoload 'ivy-recentf "ivy" "" t)
+(autoload 'ivy-read "ivy")
+(autoload 'swiper "swiper" "" t)
+
+(defun swiper-the-thing ()
+  (interactive)
+  (swiper (if (region-active-p)
+              (buffer-substring-no-properties (region-beginning) (region-end))
+            (thing-at-point 'symbol))))
+;; }}
+
+;; {{ shell and conf
+(add-to-list 'auto-mode-alist '("\\.[^b][^a][a-zA-Z]*rc$" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.aspell\\.en\\.pws\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.meta\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.?muttrc\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.ctags\\'" . conf-mode))
+;; }}
+
+;; {{ support MY packages which are not included in melpa
+(autoload 'wxhelp-browse-class-or-api "wxwidgets-help" "" t)
+(autoload 'issue-tracker-increment-issue-id-under-cursor "issue-tracker" "" t)
+(autoload 'issue-tracker-insert-issue-list "issue-tracker" "" t)
+(autoload 'elpamr-create-mirror-for-installed "elpa-mirror" "" t)
+(autoload 'org2nikola-export-subtree "org2nikola" "" t)
+(autoload 'org2nikola-rerender-published-posts "org2nikola" "" t)
+(setq org2nikola-use-verbose-metadata t) ; for nikola 7.7+
+;; }}
+
 (define-key global-map (kbd "RET") 'newline-and-indent)
 
 ;; M-x without meta
 (global-set-key (kbd "C-x C-m") 'execute-extended-command)
-
-;; C#
-(add-to-list 'auto-mode-alist '("\\.cs$" . csharp-mode))
 
 ;; {{ isearch
 ;; Use regex to search by default
@@ -42,10 +69,10 @@
 
 
 ;; {{ find-file-in-project (ffip)
-(autoload 'ivy-read "ivy")
 (autoload 'find-file-in-project "find-file-in-project" "" t)
 (autoload 'find-file-in-project-by-selected "find-file-in-project" "" t)
 (autoload 'ffip-get-project-root-directory "find-file-in-project" "" t)
+(setq ffip-match-path-instead-of-filename t)
 
 (defun neotree-project-dir ()
   "Open NeoTree using the git root."
@@ -58,16 +85,30 @@
           (neotree-find file-name))
       (message "Could not find git project root."))))
 
-(defun my-vc-git-grep ()
+(defvar my-grep-extra-opts
+  "--exclude-dir=.git --exclude-dir=.bzr --exclude-dir=.svn"
+  "Extra grep options passed to `my-grep'")
+
+(defun my-grep ()
+  "Grep file at project root directory or current directory"
   (interactive)
-  (let ((re (if (region-active-p)
-                (buffer-substring-no-properties (region-beginning) (region-end))
-              (read-string "Grep pattern: ")))
-        root)
-    ;; root should be initialize here, or else emacs crash
-    (setq root (ffip-get-project-root-directory))
-    (if root (vc-git-grep re "*" root))
-    ))
+  (let ((keyword (if (region-active-p)
+                     (buffer-substring-no-properties (region-beginning) (region-end))
+                   (read-string "Enter grep pattern: ")))
+        cmd collection val 1st root)
+
+    (let ((default-directory (setq root (or (ffip-get-project-root-directory) default-directory))))
+      (setq cmd (format "%s -rsn %s \"%s\""
+                        grep-program my-grep-extra-opts keyword))
+      (when (and (setq collection (split-string
+                                   (shell-command-to-string cmd)
+                                   "\n"
+                                   t))
+                 (setq val (ivy-read (format "matching \"%s\" at %s:" keyword root) collection))))
+      (setq lst (split-string val ":"))
+      (find-file (car lst))
+      (goto-char (point-min))
+      (forward-line (1- (string-to-number (cadr lst)))))))
 ;; }}
 
 ;; {{ groovy-mode
@@ -146,15 +187,6 @@
   (interactive)
   (man (concat "-k " (thing-at-point 'symbol))))
 
-;; {{ swiper
-(autoload 'swiper "swiper" "" t)
-(defun swiper-the-thing ()
-  (interactive)
-  (swiper (if (region-active-p)
-              (buffer-substring-no-properties (region-beginning) (region-end))
-            (thing-at-point 'symbol))))
-;; }}
-
 ;; @see http://blog.binchen.org/posts/effective-code-navigation-for-web-development.html
 ;; don't let the cursor go into minibuffer prompt
 (setq minibuffer-prompt-properties (quote (read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)))
@@ -202,6 +234,8 @@
   (unless (is-buffer-file-temp)
 	;; highlight FIXME/BUG/TODO in comment
 	(require 'fic-mode)
+    ;; don't spell check double words
+    (setq flyspell-check-doublon nil)
 	(fic-mode 1)
 	;; enable for all programming modes
 	;; http://emacsredux.com/blog/2013/04/21/camelcase-aware-editing/
@@ -210,8 +244,7 @@
 	;; eldoc, show API doc in minibuffer echo area
 	(turn-on-eldoc-mode)
 	;; show trailing spaces in a programming mod
-	(setq show-trailing-whitespace t)
-	))
+	(setq show-trailing-whitespace t)))
 
 (add-hook 'prog-mode-hook 'generic-prog-mode-hook-setup)
 
@@ -383,7 +416,25 @@ buffer is not visiting a file."
 
 ;; {{ imenu
 (setq imenu-max-item-length 128)
-(setq imenu-max-item-length 64)
+
+(defun ivy-imenu-get-candidates-from (alist  &optional prefix)
+  (cl-loop for elm in alist
+           nconc (if (imenu--subalist-p elm)
+                       (ivy-imenu-get-candidates-from
+                        (cl-loop for (e . v) in (cdr elm) collect
+                                 (cons e (if (integerp v) (copy-marker v) v)))
+                        (concat prefix (if prefix ".") (car elm)))
+                   (and (cdr elm) ; bug in imenu, should not be needed.
+                        (setcdr elm (copy-marker (cdr elm))) ; Same as [1].
+                        (list (cons (concat prefix (if prefix ".") (car elm))
+                                    (copy-marker (cdr elm))))))))
+
+(defun ivy-imenu ()
+  (interactive)
+  (let ((items (imenu--make-index-alist t)))
+    (ivy-read "imenu items:"
+              (ivy-imenu-get-candidates-from (delete (assoc "*Rescan*" items) items))
+              :action (lambda (k) (goto-char k)))))
 ;; }}
 
 ;; {{ recentf-mode
@@ -504,6 +555,7 @@ buffer is not visiting a file."
       "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
 ;; }}
 
+;; {{
 (defun goto-edge-by-comparing-font-face (&optional step)
 "Goto either the begin or end of string/comment/whatever.
 If step is -1, go backward."
@@ -530,6 +582,9 @@ If step is -1, go backward."
 (require 'swiper)
 (setq ivy-wrap t)
 (setq ivy-count-format "%d/%d")
+(defun string-edit-at-point-hook-setup ()
+  (web-mode))
+(add-hook 'string-edit-at-point-hook 'string-edit-at-point-hook-setup)
 
 (provide 'init-misc)
 
