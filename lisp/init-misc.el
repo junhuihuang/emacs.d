@@ -582,6 +582,11 @@ If step is -1, go backward."
 (require 'swiper)
 (setq ivy-wrap t)
 (setq ivy-count-format "%d/%d")
+(require 'thingatpt)
+(defun occur-at-point (nlines)
+ (interactive "P")
+ (occur (format "%s" (thing-at-point 'symbol)) nlines))
+
 (defun string-edit-at-point-hook-setup ()
   (web-mode))
 (add-hook 'string-edit-at-point-hook 'string-edit-at-point-hook-setup)
