@@ -378,7 +378,7 @@
   "cbu" 'cb-get-url-from-controller
   "ht" 'etags-select-find-tag-at-point ;; better than find-tag (C-])
   "hp" 'etags-select-find-tag
-  "hm" 'helm-bookmarks
+  "hm" 'ivy-bookmark-goto
   "yy" 'browse-kill-ring
   "gf" 'counsel-git-find-file
   "gl" 'counsel-git-grep-yank-line
@@ -590,14 +590,8 @@
   "xnd" 'narrow-to-defun
   "xnr" 'narrow-to-region
   "ycr" 'my-yas-reload-all
-  "zc" 'wg-create-workgroup
-  "zk" 'wg-kill-workgroup
-  "zv" 'my-wg-swich-to-workgroup
-  "zj" 'my-wg-switch-to-workgroup-at-index
-  "zs" 'my-wg-save-session
-  "zb" 'wg-switch-to-buffer
-  "zwr" 'wg-redo-wconfig-change
-  "zws" 'wg-save-wconfig
+  "wgc" 'wg-create-workgroup
+  "wgs" 'my-wg-switch-workgroup
   "wf" 'popup-which-function)
 
 ;; change mode-line color by evil state
