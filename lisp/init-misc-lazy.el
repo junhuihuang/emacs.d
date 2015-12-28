@@ -449,6 +449,8 @@ Current position is preserved."
 ;; makefile
 (add-to-list 'auto-mode-alist '("\\.ninja$" . makefile-gmake-mode))
 
+(add-to-list 'auto-mode-alist '("\\.proto\\'" . protobuf-mode))
+
 ;; midnight mode purges buffers which haven't been displayed in 3 days
 (require 'midnight)
 (setq midnight-mode t)

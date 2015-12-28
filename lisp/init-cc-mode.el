@@ -44,11 +44,11 @@
 
   ;first arg of arglist to functions: tabbed in once
   ;(default was c-lineup-arglist-intro-after-paren)
-  (c-set-offset 'arglist-intro '+)
+  ;; (c-set-offset 'arglist-intro '+)
 
   ;second line of arglist to functions: tabbed in once
   ;(default was c-lineup-arglist)
-  (c-set-offset 'arglist-cont-nonempty '+)
+  ;; (c-set-offset 'arglist-cont-nonempty '+)
 
   ;switch/case:  make each case line indent from switch
   (c-set-offset 'case-label '+)
@@ -108,6 +108,7 @@
               ;; indent
               (fix-c-indent-offset-according-to-syntax-context 'substatement 0)
               (fix-c-indent-offset-according-to-syntax-context 'func-decl-cont 0)
+              (fix-c-indent-offset-according-to-syntax-context 'innamespace [0])
 
               ;; gtags (GNU global) stuff
               (setq gtags-suggested-key-mapping t)
@@ -116,5 +117,7 @@
                      (not (is-buffer-file-temp)))
               (my-c-mode-hook))
             ))
+
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 (provide 'init-cc-mode)

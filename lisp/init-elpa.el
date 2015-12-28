@@ -115,6 +115,7 @@ ARCHIVE is the string name of the package archive.")
     packed
     gitconfig-mode
     textile-mode
+    protobuf-mode
     w3m
     fakir
     erlang
@@ -230,6 +231,7 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'scratch)
 (require-package 'rainbow-delimiters)
 (require-package 'textile-mode)
+(require-package 'protobuf-mode)
 (require-package 'coffee-mode)
 (require-package 'flymake-coffee)
 (require-package 'crontab-mode)
