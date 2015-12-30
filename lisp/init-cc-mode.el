@@ -118,6 +118,21 @@
               (my-c-mode-hook))
             ))
 
+;; electric-pair-mode 在某些情况下，对`{`无法正常使用
+(defun my-c-mode-auto-pair ()
+  (interactive)
+  (make-local-variable 'skeleton-pair-alist)
+  (setq skeleton-pair-alist  '(
+    (?\( _ ")")
+    (?\[ _ "]")
+    (?{ \n > _ \n ?} >)))
+  (setq skeleton-pair t)
+  ;; (local-set-key (kbd "(") 'skeleton-pair-insert-maybe)
+  ;; (local-set-key (kbd "[") 'skeleton-pair-insert-maybe)
+  (local-set-key (kbd "{") 'skeleton-pair-insert-maybe))
+
+(add-hook 'c-mode-common-hook 'my-c-mode-auto-pair)
+
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 (provide 'init-cc-mode)
