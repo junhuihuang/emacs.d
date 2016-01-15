@@ -18,6 +18,14 @@
 (add-to-list 'auto-mode-alist '("\\.ctags\\'" . conf-mode))
 ;; }}
 
+;; salesforce apex
+(autoload 'apex-mode "apex-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.cls\\'" . apex-mode))
+;; java
+(add-to-list 'auto-mode-alist '("\\.aj\\'" . java-mode))
+;; makefile
+(add-to-list 'auto-mode-alist '("\\.ninja$" . makefile-gmake-mode))
+
 ;; {{ support MY packages which are not included in melpa
 (autoload 'wxhelp-browse-class-or-api "wxwidgets-help" "" t)
 (autoload 'issue-tracker-increment-issue-id-under-cursor "issue-tracker" "" t)
@@ -185,7 +193,9 @@
 
 (defun lookup-doc-in-man ()
   (interactive)
-  (man (concat "-k " (thing-at-point 'symbol))))
+  (man (concat "-k " (if (region-active-p)
+       (buffer-substring-no-properties (region-beginning) (region-end))
+      (thing-at-point 'symbol)))))
 
 ;; @see http://blog.binchen.org/posts/effective-code-navigation-for-web-development.html
 ;; don't let the cursor go into minibuffer prompt
@@ -417,11 +427,13 @@ buffer is not visiting a file."
 
 ;; {{ recentf-mode
 (setq recentf-keep '(file-remote-p file-readable-p))
-(setq recentf-max-saved-items 1000
+(setq recentf-max-saved-items 2048
       recentf-exclude '("/tmp/"
                         "/ssh:"
                         "/sudo:"
-                        "/home/[a-z]\+/\\."))
+                        ;; ~/.emacs.d/**/*.el included
+                        ;; "/home/[a-z]\+/\\.[a-df-z]" ; configuration file should not be excluded
+                        ))
 ;; }}
 
 ;; {{ popup functions

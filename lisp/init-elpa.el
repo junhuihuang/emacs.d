@@ -300,5 +300,6 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'define-word)
 (require-package 'quack) ;; for scheme
 (require-package 'helm-swoop)
+(require-package 'hydra)
 
 (provide 'init-elpa)
