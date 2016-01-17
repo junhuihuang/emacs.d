@@ -258,11 +258,9 @@
 
 (add-hook 'prog-mode-hook 'generic-prog-mode-hook-setup)
 
-(add-hook 'prog-mode-hook (lambda () (flyspell-mode -1)))
-(add-hook 'prog-mode-hook (lambda () (flyspell-lazy-mode -1)))
-
-;; (dolist (hook '(c-mode-common-hook))
-;;      (add-hook hook (lambda () (flyspell-mode -1))))
+;; disable init-spelling.el
+;; (add-hook 'prog-mode-hook (lambda () (flyspell-mode 0)))
+;; (add-hook 'prog-mode-hook (lambda () (flyspell-lazy-mode 0)))
 
 ;; {{ display long lines in truncated style (end line with $)
 (defun truncate-lines-setup ()

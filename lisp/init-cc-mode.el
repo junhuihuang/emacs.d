@@ -6,6 +6,12 @@
       (c-lineup-topmost-intro-cont langelem))))
 
 
+;; http://www.emacswiki.org/emacs/fic-mode.el
+(defun turn-on-fic-mode ()
+  "turn fic-mode on"
+  (interactive)
+  (fic-mode 1))
+
 ;C/C++ SECTION
 (defun my-c-mode-hook ()
   (message "my-c-mode-hook called (buffer-file-name)=%s" (buffer-file-name))
