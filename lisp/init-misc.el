@@ -244,11 +244,12 @@
 
 (defun generic-prog-mode-hook-setup ()
   (unless (is-buffer-file-temp)
+	;; stevens disable fic-mode for performance
 	;; highlight FIXME/BUG/TODO in comment
-	(require 'fic-mode)
+	;; (require 'fic-mode)
     ;; don't spell check double words
     (setq flyspell-check-doublon nil)
-	(fic-mode 1)
+	;; (fic-mode 1)
 	;; enable for all programming modes
 	;; http://emacsredux.com/blog/2013/04/21/camelcase-aware-editing/
 	(subword-mode)
