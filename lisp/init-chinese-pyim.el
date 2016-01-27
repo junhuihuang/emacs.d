@@ -24,11 +24,17 @@ when toggle off input method, switch to evil-normal-state if current state is ev
 (global-set-key (kbd "C-\\") 'evil-toggle-input-method)
 ;; }}
 
+(setq pyim-punctuation-translate-p nil) ;; use western punctuation (ban jiao fu hao)
+
 (eval-after-load 'chinese-pyim
   '(progn
      (setq default-input-method "chinese-pyim")
-     (setq pyim-use-tooltip nil)              ; don't use tooltip
-     (setq pyim-dicts '((:name "pinyin1" :file "~/.eim/py.txt" :coding utf-8-unix)))
+     (setq pyim-use-tooltip 'popup) ; don't use tooltip
+     ;; personal dictionary should be out of ~/.emacs.d if possible
+     (if (file-exists-p (file-truename "~/.eim/pyim-personal.txt"))
+       (setq pyim-personal-file "~/.eim/pyim-personal.txt"))
+     ;; another official dictionary
+     (setq pyim-dicts '((:name "pinyin1" :file "~/.emacs.d/pyim/py.txt" :coding utf-8-unix)))
 
      ;; {{ fuzzy pinyin setup
      (defun pyim-fuzzy-pinyin-adjust-shanghai ()

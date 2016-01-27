@@ -134,8 +134,6 @@ Or else, find files since 24 weeks (6 months) ago."
                                       (setq key (format "%s (%s)" (car bookmark) (cdr (assoc 'filename bookmark)))))
                                      ((and (assoc 'location bookmark) (cdr (assoc 'location bookmark)))
                                       ;; bmkp-jump-w3m is from bookmark+
-                                      (unless (featurep 'bookmark+)
-                                        (require 'bookmark+))
                                       (setq key (format "%s (%s)" (car bookmark) (cdr (assoc 'location bookmark)))))
                                      (t
                                       (setq key (car bookmark))))
@@ -143,8 +141,28 @@ Or else, find files since 24 weeks (6 months) ago."
                                     (cons key bookmark)))
                                 bookmarks))
               :action (lambda (bookmark)
+                        (unless (featurep 'bookmark+)
+                          (require 'bookmark+))
                         (bookmark-jump bookmark)))
     ))
+
+(defun counsel-yank-bash-history ()
+  "Yank the bash history"
+  (interactive)
+  (let (hist-cmd collection val)
+    (shell-command "history -r") ; reload history
+    (setq collection
+          (nreverse
+           (split-string (with-temp-buffer (insert-file-contents (file-truename "~/.bash_history"))
+                                           (buffer-string))
+                         "\n"
+                         t)))
+    (when (and collection (> (length collection) 0)
+               (setq val (if (= 1 (length collection)) (car collection)
+                           (ivy-read (format "Bash history:") collection))))
+        (kill-new val)
+        (message "%s => kill-ring" val))))
+
 
 (defun counsel-recentf-goto ()
   "Recent files"

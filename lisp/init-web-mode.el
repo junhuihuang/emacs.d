@@ -1,6 +1,7 @@
 (autoload 'web-mode "web-mode")
 (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.cmp\\'" . web-mode)) ; salesforce
+(add-to-list 'auto-mode-alist '("\\.app\\'" . web-mode)) ; salesforce
 (add-to-list 'auto-mode-alist '("\\.wp\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.tmpl\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
@@ -17,6 +18,7 @@
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.xul?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.eex?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.xml?\\'" . web-mode))
 
 (defun flymake-html-init ()
        (let* ((temp-file (flymake-init-create-temp-buffer-copy
@@ -40,8 +42,7 @@
 (defun web-mode-hook-setup ()
   (unless (is-buffer-file-temp)
     (flymake-html-load)
-    (unless *no-memory*
-      (flyspell-mode 1))
+    (enable-flyspell-mode-conditionally)
     (setq flyspell-check-doublon nil)
     (remove-hook 'yas-after-exit-snippet-hook
                  'web-mode-yasnippet-exit-hook t)
