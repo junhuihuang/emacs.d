@@ -102,9 +102,9 @@
 ;; (require 'init-chinese-pyim) ;; cannot be idle-required
 ;; need statistics of keyfreq asap
 (require 'init-keyfreq)
-;; stevens disable
-;; (require 'init-httpd)
+(require 'init-httpd)
 (require 'init-highlight-windows)
+(require 'init-blog)
 
 ;; projectile costs 7% startup time
 
