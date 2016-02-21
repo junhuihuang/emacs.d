@@ -251,7 +251,6 @@ If HARDCODED-ARRAY-INDEX provided, array index in JSON path is replaced with it.
     ;; looks nodejs is more popular
     (require 'js-comint)
     ;; if use node.js we need nice output
-    (setenv "NODE_NO_READLINE" "1")
     (js2-imenu-extras-mode)
     (setq mode-name "JS2")
     (require 'js2-refactor)
@@ -301,6 +300,7 @@ sudo pip install jsbeautifier"
 
 (setq-default js2-additional-externs
               '("$"
+                "$A" ; salesforce lightning component
                 "AccessifyHTML5"
                 "KeyEvent"
                 "Raphael"

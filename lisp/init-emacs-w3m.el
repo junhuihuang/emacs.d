@@ -154,9 +154,54 @@
   "Opens the current link or image or current page's uri or any url-like text under cursor in firefox."
   (interactive)
   (let (url)
-    (if (or (string= major-mode "w3m-mode") (string= major-mode "gnus-article-mode"))
-        (setq url (or (w3m-anchor) (w3m-image) w3m-current-url)))
+    (when (or (string= major-mode "w3m-mode") (string= major-mode "gnus-article-mode"))
+      (setq url (w3m-anchor))
+      (if (or (not url) (string= url "buffer://"))
+          (setq url (or (w3m-image) w3m-current-url))))
     (browse-url-generic (if url url (car (browse-url-interactive-arg "URL: "))))
+    ))
+
+(defun w3mext-open-with-mplayer ()
+  (interactive)
+  (let (url cmd)
+    (when (or (string= major-mode "w3m-mode") (string= major-mode "gnus-article-mode"))
+      (setq url (w3m-anchor))
+      (setq cmd (format "%s -cache 2000 %s &" (my-guess-mplayer-path) url))
+      (when (or (not url) (string= url "buffer://"))
+        (setq url (w3m-image))
+        ;; cache 2M data and don't block UI
+        (setq cmd (my-guess-image-viewer-path url t))))
+    (if url (shell-command cmd))))
+
+(defun w3mext-subject-to-target-filename ()
+  (let (rlt str)
+    (save-excursion
+      (goto-char (point-min))
+      ;; first line in email could be some hidden line containing NO to field
+      (setq str (buffer-substring-no-properties (point-min) (point-max))))
+    ;; (message "str=%s" str)
+    (if (string-match "^Subject: \\(.+\\)" str)
+        (setq rlt (match-string 1 str)))
+    ;; clean the timestamp at the end of subject
+    (setq rlt (replace-regexp-in-string "[ 0-9_.'/-]+$" "" rlt))
+    (setq rlt (replace-regexp-in-string "'s " " " rlt))
+    (setq rlt (replace-regexp-in-string "[ ,_'/-]+" "-" rlt))
+    rlt))
+
+(defun w3mext-download-rss-stream ()
+  (interactive)
+  (let (url cmd)
+    (when (or (string= major-mode "w3m-mode") (string= major-mode "gnus-article-mode"))
+      (setq url (w3m-anchor))
+      (cond
+       ((or (not url) (string= url "buffer://"))
+        (message "This link is not video/audio stream."))
+       (t
+        (setq cmd (format "curl -L %s > %s.%s"  url (w3mext-subject-to-target-filename) (file-name-extension url)))
+        (kill-new cmd)
+        (if (fboundp 'simpleclip-set-contents)
+            (simpleclip-set-contents cmd))
+        (message "%s => clipd/kill-ring" cmd))))
     ))
 
 (eval-after-load 'w3m

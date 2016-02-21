@@ -36,11 +36,25 @@
 (global-evil-surround-mode 1)
 ;; }}
 
-;; press ";" instead of ":"
-;; stevens
-;; (define-key evil-normal-state-map (kbd ";") 'evil-ex)
+;; {{ For example, press `viW*`
+(require 'evil-visualstar)
+(setq evil-visualstar/persistent t)
+(global-evil-visualstar-mode t)
+;; }}
+
+;; {{ https://github.com/gabesoft/evil-mc
+;; `grm' create cursor for all matching selected
+;; `gru' undo all cursors
+;; `grs' pause cursor
+;; `grr' resume cursor
+;; `grh' make cursor here
+;; `C-p', `C-n' previous cursor, next cursor
+(require 'evil-mc)
+(global-evil-mc-mode 1)
+;; }}
 
 (require 'evil-mark-replace)
+
 
 ;; {{ define my own text objects, works on evil v1.0.9 using older method
 ;; @see http://stackoverflow.com/questions/18102004/emacs-evil-mode-how-to-create-a-new-text-object-to-select-words-with-any-non-sp
@@ -425,9 +439,12 @@ If the character before and after CH is space or tab, CH is NOT slash"
   ;; @see https://github.com/pidu/git-timemachine
   ;; p: previous; n: next; w:hash; W:complete hash; g:nth version; q:quit
   "tmt" 'git-timemachine-toggle
+  "tdb" 'tidy-buffer
+  "tdl" 'tidy-current-line
   ;; toggle overview,  @see http://emacs.wordpress.com/2007/01/16/quick-and-dirty-code-folding/
   "ov" 'my-overview-of-current-buffer
   "or" 'open-readme-in-git-root-directory
+  "oo" 'compile
   "c$" 'org-archive-subtree ; `C-c $'
   ;; org-do-demote/org-do-premote support selected region
   "c<" 'org-do-promote ; `C-c C-<'
@@ -515,6 +532,7 @@ If the character before and after CH is space or tab, CH is NOT slash"
   ;; "opt" is occupied by my-open-project-todo
   ;; recommended in html
   "md" 'mc/mark-all-like-this-dwim
+  "me" 'mc/edit-lines
   "otl" 'org-toggle-link-display
   "om" 'toggle-org-or-message-mode
   "ut" 'undo-tree-visualize

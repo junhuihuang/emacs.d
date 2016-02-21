@@ -230,6 +230,7 @@
         ",q"
         ",r"
         ",s"
+        "/" ; gnus limit
         ",t"
         ",u"
         ",v"
@@ -250,8 +251,10 @@
 	;; enable for all programming modes
 	;; http://emacsredux.com/blog/2013/04/21/camelcase-aware-editing/
 	(subword-mode)
-	(electric-pair-mode 1)
-	;; eldoc, show API doc in minibuffer echo area
+    (setq-default electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
+    (electric-pair-mode 1)
+
+    ;; eldoc, show API doc in minibuffer echo area
 	(turn-on-eldoc-mode)
 	;; show trailing spaces in a programming mod
 	(setq show-trailing-whitespace t)))
@@ -585,6 +588,7 @@ If step is -1, go backward."
   ;; Use paredit in the minibuffer
   (conditionally-paredit-mode 1)
   (local-set-key (kbd "M-y") 'paste-from-x-clipboard)
+  (local-set-key (kbd "C-k") 'kill-line)
   (setq gc-cons-threshold most-positive-fixnum))
 
 (defun my-minibuffer-exit-hook ()
@@ -655,26 +659,32 @@ If step is -1, go backward."
             (fb (make-temp-file (expand-file-name "scor"
                                                   (or small-temporary-file-directory
                                                       temporary-file-directory)))))
+        ;;  save current content as file B
         (when fb
           (setq tmp (diff-region-format-region-boundary (region-beginning) (region-end)))
           (write-region (car tmp) (cadr tmp) fb))
 
         (setq rlt-buf (get-buffer-create "*Diff-region-output*"))
         (when (and fa (file-exists-p fa) fb (file-exists-p fb))
+          ;; save region A as file A
           (save-current-buffer
             (set-buffer (get-buffer-create "*Diff-regionA*"))
             (write-region (point-min) (point-max) fa))
+          ;; diff NOW!
           (setq diff-output (shell-command-to-string (format "diff -Nabur %s %s" fa fb)))
           ;; show the diff output
           (if (string= diff-output "")
+              ;; two regions are same
               (message "Two regions are SAME!")
-              (save-current-buffer
-                (switch-to-buffer-other-window rlt-buf)
-                (set-buffer rlt-buf)
-                (erase-buffer)
-                (insert diff-output)
-                (diff-mode))))
+            ;; show the diff
+            (save-current-buffer
+              (switch-to-buffer-other-window rlt-buf)
+              (set-buffer rlt-buf)
+              (erase-buffer)
+              (insert diff-output)
+              (diff-mode))))
 
+        ;; clean the temporary files
         (if (and fa (file-exists-p fa))
             (delete-file fa))
         (if (and fb (file-exists-p fb))
