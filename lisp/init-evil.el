@@ -42,16 +42,17 @@
 (global-evil-visualstar-mode t)
 ;; }}
 
-;; {{ https://github.com/gabesoft/evil-mc
-;; `grm' create cursor for all matching selected
-;; `gru' undo all cursors
-;; `grs' pause cursor
-;; `grr' resume cursor
-;; `grh' make cursor here
-;; `C-p', `C-n' previous cursor, next cursor
-(require 'evil-mc)
-(global-evil-mc-mode 1)
-;; }}
+;; disabled by stevens
+;; ;; {{ https://github.com/gabesoft/evil-mc
+;; ;; `grm' create cursor for all matching selected
+;; ;; `gru' undo all cursors
+;; ;; `grs' pause cursor
+;; ;; `grr' resume cursor
+;; ;; `grh' make cursor here
+;; ;; `C-p', `C-n' previous cursor, next cursor
+;; (require 'evil-mc)
+;; (global-evil-mc-mode 1)
+;; ;; }}
 
 (require 'evil-mark-replace)
 
