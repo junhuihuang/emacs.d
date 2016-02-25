@@ -6,7 +6,7 @@
       (c-lineup-topmost-intro-cont langelem))))
 
 ;; avoid default "gnu" style, use more popular one
-;;(setq c-default-style "linux")
+(setq c-default-style "linux")
 
 (defun fix-c-indent-offset-according-to-syntax-context (key val)
   ;; remove the old element
@@ -44,7 +44,7 @@
   (c-toggle-hungry-state 1)
 
   ;make open-braces after a case: statement indent to 0 (default was '+)
-  (c-set-offset 'statement-case-open 0)
+  ;(c-set-offset 'statement-case-open 0)
 
   ;; indent
   (fix-c-indent-offset-according-to-syntax-context 'substatement 0)
