@@ -1,13 +1,24 @@
+(defvar counsel-process-filename-string nil
+  "Give you a chance to change file name string for other counsel-* functions")
 ;; {{ @see http://oremacs.com/2015/04/19/git-grep-ivy/
 (defun counsel-git-grep-or-find-api (fn git-cmd hint open-another-window)
   "Apply FN on the output lines of GIT-CMD.  HINT is hint when user input.
-IF OPEN-ANOTHER-WINDOW is true, open the file in another window."
-  (let ((default-directory (locate-dominating-file
+IF OPEN-ANOTHER-WINDOW is true, open the file in another window.
+Yank the file name at the same time."
+  (let ((str (if (buffer-file-name) (file-name-base (buffer-file-name)) ""))
+        (default-directory (locate-dominating-file
                             default-directory ".git"))
-        (keyword (if (region-active-p)
-                     (buffer-substring-no-properties (region-beginning) (region-end))
-                   (read-string (concat "Enter " hint " pattern:" ))))
+        keyword
         collection val lst)
+
+    ;; insert base file name into kill ring is possible
+    (kill-new (if counsel-process-filename-string
+                  (funcall counsel-process-filename-string str)
+                str))
+
+    (setq keyword (if (region-active-p)
+                      (buffer-substring-no-properties (region-beginning) (region-end))
+                    (read-string (concat "Enter " hint " pattern:" ))))
 
     (setq collection (split-string (shell-command-to-string (format git-cmd keyword))
                                    "\n"
@@ -15,7 +26,7 @@ IF OPEN-ANOTHER-WINDOW is true, open the file in another window."
 
     (when (and collection (> (length collection) 0))
       (setq val (if (= 1 (length collection)) (car collection)
-                    (ivy-read (format " matching \"%s\":" keyword) collection)))
+                    (ivy-read (format "matching \"%s\":" keyword) collection)))
       (funcall fn open-another-window val))))
 
 (defun counsel-git-grep (&optional open-another-window)
@@ -33,7 +44,7 @@ If OPEN-ANOTHER-WINDOW is not nil, results are displayed in new window."
                      (forward-line (1- linenum)))))))
 
     (counsel-git-grep-or-find-api fn
-                                  "git --no-pager grep --full-name -n --no-color -i -e \"%s\""
+                                  "git --no-pager grep -I --full-name -n --no-color -i -e \"%s\""
                                   "grep"
                                   open-another-window)))
 
@@ -65,7 +76,7 @@ If INSERT-LINE is not nil, insert the line grepped"
                  (message "line from %s:%s => kill-ring" (car lst) (nth 1 lst)))))
 
     (counsel-git-grep-or-find-api fn
-                                  "git --no-pager grep --full-name -n --no-color -i -e \"%s\""
+                                  "git --no-pager grep -I --full-name -n --no-color -i -e \"%s\""
                                   "grep"
                                   nil)))
 
@@ -171,5 +182,17 @@ Or else, find files since 24 weeks (6 months) ago."
   (interactive)
   (unless recentf-mode (recentf-mode 1))
   (ivy-recentf))
+
+(defun counsel-goto-recent-directory ()
+  "Recent directories"
+  (interactive)
+  (unless recentf-mode (recentf-mode 1))
+  (let ((collection
+         (delete-dups
+          (append (mapcar 'file-name-directory recentf-list)
+                  ;; fasd history
+                  (if (executable-find "fasd")
+                      (split-string (shell-command-to-string "fasd -ld") "\n" t))))))
+    (ivy-read "directories:" collection :action 'dired)))
 
 (provide 'init-ivy)

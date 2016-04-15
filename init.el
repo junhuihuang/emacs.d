@@ -22,24 +22,31 @@
                    (*linux* nil)
                    (t nil)))
 
-(require 'init-modeline)
-(require 'cl-lib)
-(require 'init-compat)
-(require 'init-utils)
-(require 'init-site-lisp) ;; Must come before elpa, as it may provide package.el
+;; @see https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/
+;; Normally file-name-handler-alist is set to
+;; (("\\`/[^/]*\\'" . tramp-completion-file-name-handler)
+;; ("\\`/[^/|:][^/|]*:" . tramp-file-name-handler)
+;; ("\\`/:" . file-name-non-special))
+;; Which means on every .el and .elc file loaded during start up, it has to runs those regexps against the filename.
+(let ((file-name-handler-alist nil))
+  (require 'init-modeline)
+  (require 'cl-lib)
+  (require 'init-compat)
+  (require 'init-utils)
+  (require 'init-site-lisp) ;; Must come before elpa, as it may provide package.el
 
-;; Windows configuration, assuming that cygwin is installed at "c:/cygwin"
-;; (condition-case nil
-;;     (when *win64*
-;;       ;; (setq cygwin-mount-cygwin-bin-directory "c:/cygwin/bin")
-;;       (setq cygwin-mount-cygwin-bin-directory "c:/cygwin64/bin")
-;;       (require 'setup-cygwin)
-;;       ;; better to set HOME env in GUI
-;;       ;; (setenv "HOME" "c:/cygwin/home/someuser")
-;;       )
-;;   (error
-;;    (message "setup-cygwin failed, continue anyway")
-;;    ))
+  ;; Windows configuration, assuming that cygwin is installed at "c:/cygwin"
+  ;; (condition-case nil
+  ;;     (when *win64*
+  ;;       ;; (setq cygwin-mount-cygwin-bin-directory "c:/cygwin/bin")
+  ;;       (setq cygwin-mount-cygwin-bin-directory "c:/cygwin64/bin")
+  ;;       (require 'setup-cygwin)
+  ;;       ;; better to set HOME env in GUI
+  ;;       ;; (setenv "HOME" "c:/cygwin/home/someuser")
+  ;;       )
+  ;;   (error
+  ;;    (message "setup-cygwin failed, continue anyway")
+  ;;    ))
 
 (require 'idle-require)
 (require 'init-elpa)
@@ -145,6 +152,7 @@
 ;; my personal setup, other major-mode specific setup need it.
 ;; It's dependent on init-site-lisp.el
 (if (file-exists-p "~/.custom.el") (load-file "~/.custom.el"))
+)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

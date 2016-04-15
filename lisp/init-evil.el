@@ -5,21 +5,16 @@
 (add-to-list 'load-path "~/.emacs.d/site-lisp/evil/lib")
 
 ;; @see https://bitbucket.org/lyro/evil/issue/511/let-certain-minor-modes-key-bindings
-(eval-after-load 'git-timemachine
-  '(progn
-     (evil-make-overriding-map git-timemachine-mode-map 'normal)
-     ;; force update evil keymaps after git-timemachine-mode loaded
-     (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)))
+(defmacro adjust-major-mode-keymap-with-evil (m &optional r)
+  `(eval-after-load (quote ,(if r r m))
+    '(progn
+       (evil-make-overriding-map ,(intern (concat m "-mode-map")) 'normal)
+       ;; force update evil keymaps after git-timemachine-mode loaded
+       (add-hook (quote ,(intern (concat m "-mode-hook"))) #'evil-normalize-keymaps))))
 
-(eval-after-load 'browse-kill-ring
-  '(progn
-     (evil-make-overriding-map browse-kill-ring-mode-map 'normal)
-     (add-hook 'browse-kill-ring-mode-hook #'evil-normalize-keymaps)))
-
-(eval-after-load 'etags-select
-  '(progn
-     (evil-make-overriding-map etags-select-mode-map 'normal)
-     (add-hook 'etags-select-mode-hook #'evil-normalize-keymaps)))
+(adjust-major-mode-keymap-with-evil "git-timemachine")
+(adjust-major-mode-keymap-with-evil "browse-kill-ring")
+(adjust-major-mode-keymap-with-evil "etags-select")
 
 (require 'evil)
 
@@ -34,6 +29,13 @@
 ;; {{ @see https://github.com/timcharper/evil-surround for tutorial
 (require 'evil-surround)
 (global-evil-surround-mode 1)
+(defun evil-surround-prog-mode-hook-setup ()
+  (push '(40 . ("(" . ")")) evil-surround-pairs-alist)
+  (push '(41 . ("(" . ")")) evil-surround-pairs-alist))
+(add-hook 'prog-mode-hook 'evil-surround-prog-mode-hook-setup)
+(defun evil-surround-emacs-lisp-mode-hook-setup ()
+  (push '(?` . ("`" . "'")) evil-surround-pairs-alist))
+(add-hook 'emacs-lisp-mode-hook 'evil-surround-emacs-lisp-mode-hook-setup)
 ;; }}
 
 ;; {{ For example, press `viW*`
@@ -250,10 +252,6 @@ If the character before and after CH is space or tab, CH is NOT slash"
 (evil-declare-key 'normal org-mode-map
   "gh" 'outline-up-heading
   "gl" 'outline-next-visible-heading
-  "S" 'org-store-link
-  "A" 'org-agenda
-  "H" 'org-beginning-of-line ; smarter behaviour on headlines etc.
-  "L" 'org-end-of-line ; smarter behaviour on headlines etc.
   "$" 'org-end-of-line ; smarter behaviour on headlines etc.
   "^" 'org-beginning-of-line ; ditto
   "<" 'org-metaleft ; out-dent
@@ -339,9 +337,9 @@ If the character before and after CH is space or tab, CH is NOT slash"
 ;; My frequently used commands are listed here
 ;; For example, for line like `"ef" 'end-of-defun`
 ;;   You can either press `,ef` or `M-x end-of-defun` to execute it
-(setq evil-leader/leader ",")
-(require 'evil-leader)
-(evil-leader/set-key
+(require 'general)
+(general-evil-setup t)
+(nvmap :prefix ","
   ;; {{ only usable in GUI emacs
   "=" 'increase-default-font-height
   "-" 'decrease-default-font-height

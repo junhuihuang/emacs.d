@@ -19,6 +19,9 @@
 (add-to-list 'auto-mode-alist '("\\.mailcap\\'" . conf-mode))
 ;; }}
 
+;; open header file under cursor
+(global-set-key (kbd "C-x C-o") 'ffap)
+
 ;; salesforce
 (autoload 'apex-mode "apex-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.cls\\'" . apex-mode))
@@ -107,8 +110,10 @@
                    (read-string "Enter grep pattern: ")))
         cmd collection val 1st root)
 
-    (let ((default-directory (setq root (or (ffip-get-project-root-directory) default-directory))))
-      (setq cmd (format "%s -rsn %s \"%s\""
+    (let ((default-directory (setq root (or (and (fboundp 'ffip-get-project-root-directory)
+                                                 (ffip-get-project-root-directory))
+                                            default-directory))))
+      (setq cmd (format "%s -rsn %s \"%s\" *"
                         grep-program my-grep-extra-opts keyword))
       (when (and (setq collection (split-string
                                    (shell-command-to-string cmd)
@@ -203,7 +208,9 @@
 ;; don't let the cursor go into minibuffer prompt
 (setq minibuffer-prompt-properties (quote (read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)))
 
-;;Don't echo passwords when communicating with interactive programs:
+;; Don't echo passwords when communicating with interactive programs:
+;; Github prompt is like "Password for 'https://user@github.com/':"
+(setq comint-password-prompt-regexp (format "%s\\|^ *Password for .*: *$" comint-password-prompt-regexp))
 (add-hook 'comint-output-filter-functions 'comint-watch-for-password-prompt)
 
 ;; {{ guide-key-mode
@@ -260,6 +267,8 @@
 	(setq show-trailing-whitespace t)))
 
 (add-hook 'prog-mode-hook 'generic-prog-mode-hook-setup)
+;; some major-modes NOT inherited from prog-mode
+(add-hook 'css-mode-hook 'generic-prog-mode-hook-setup)
 
 ;; disable init-spelling.el
 ;; (add-hook 'prog-mode-hook (lambda () (flyspell-mode 0)))
@@ -600,13 +609,28 @@ If step is -1, go backward."
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
+
+;; {{ string-edit-mode
+(autoload 'string-edit-at-point "string-edit" "" t nil)
 (defun string-edit-at-point-hook-setup ()
-  (web-mode))
+  (let ((major-mode-list (remove major-mode '(web-mode js2-mode js-mode css-mode emacs-lisp-mode)))
+        (str (buffer-substring-no-properties (point-min) (point-max))))
+    ;; (ivy-read "directories:" collection :action 'dired)
+    ;; (message "original=%s" (se/find-original))
+    ;; (message "major-mode-list=%s major-mode=%s" major-mode-list major-mode)
+    (save-excursion
+      (cond
+       ((string-match-p "<[a-zA-Z]" str)
+        (web-mode))
+       ((string-match-p "function(\\| var \\|" str)
+        (js-mode))))))
 (add-hook 'string-edit-at-point-hook 'string-edit-at-point-hook-setup)
+;; }}
 
 ;; Diff two regions
 ;; Step 1: Select a region and `M-x diff-region-tag-selected-as-a'
 ;; Step 2: Select another region and `M-x diff-region-compare-with-b'
+;; Press "q" in evil-mode or "C-c C-c" to exit the diff output buffer
 (defun diff-region-format-region-boundary (b e)
   "Make sure lines are selected and B is less than E"
   (let (tmp rlt)
@@ -632,6 +656,11 @@ If step is -1, go backward."
       (setq e (line-end-position)))
     (setq rlt (list b e))
     rlt))
+
+(defun diff-region-exit ()
+  (interactive)
+  (bury-buffer "*Diff-region-output*")
+  (winner-undo))
 
 (defun diff-region-tag-selected-as-a ()
   "Select a region to compare"
@@ -682,7 +711,11 @@ If step is -1, go backward."
               (set-buffer rlt-buf)
               (erase-buffer)
               (insert diff-output)
-              (diff-mode))))
+              (diff-mode)
+              (if (fboundp 'evil-local-set-key)
+                           (evil-local-set-key 'normal "q" 'diff-region-exit))
+              (local-set-key (kbd "C-c C-c") 'diff-region-exit)
+              )))
 
         ;; clean the temporary files
         (if (and fa (file-exists-p fa))
@@ -690,6 +723,12 @@ If step is -1, go backward."
         (if (and fb (file-exists-p fb))
             (delete-file fb)))
     (message "Please select region at first!")))
+
+;; {{ auto-save.el
+(require 'auto-save)
+(auto-save-enable)
+(setq auto-save-slient t)
+;; }}
 
 (provide 'init-misc)
 
