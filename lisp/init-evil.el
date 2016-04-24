@@ -303,8 +303,6 @@ If the character before and after CH is space or tab, CH is NOT slash"
 (define-key evil-ex-completion-map (kbd "M-n") 'next-complete-history-element)
 
 (define-key evil-normal-state-map "Y" (kbd "y$"))
-(define-key evil-normal-state-map "+" 'evil-numbers/inc-at-pt)
-(define-key evil-normal-state-map "-" 'evil-numbers/dec-at-pt)
 (define-key evil-normal-state-map "go" 'goto-char)
 (define-key evil-normal-state-map (kbd "M-y") 'browse-kill-ring)
 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
@@ -314,6 +312,10 @@ If the character before and after CH is space or tab, CH is NOT slash"
 ;; add by stevens
 (define-key evil-normal-state-map (kbd "C-n") 'next-error)
 (define-key evil-normal-state-map (kbd "C-p") 'previous-error)
+
+(require 'evil-numbers)
+(define-key evil-normal-state-map "+" 'evil-numbers/inc-at-pt)
+(define-key evil-normal-state-map "-" 'evil-numbers/dec-at-pt)
 
 (require 'evil-matchit)
 (global-evil-matchit-mode 1)
