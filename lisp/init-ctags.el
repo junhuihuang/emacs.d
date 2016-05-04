@@ -22,4 +22,24 @@
 (setq tags-table-list '("~/bemetoy_svn/BemeNew/poppy/BemetoyServer/common/TAGS" "~/bemetoy_svn/BemeNew/poppy/common/TAGS"))
 (setq tags-table-list '("~/Dropbox/project/bemetoy_svn/BemeNew/poppy/BemetoyServer/common/TAGS" "~/Dropbox/project/bemetoy_svn/BemeNew/poppy/common/TAGS")))
 
+
+;; stevens
+;; https://www.emacswiki.org/emacs/EmacsTags#toc2
+;;; View tags other window
+(defun view-tag-other-window (tagname &optional next-p regexp-p)
+  "Same as `find-tag-other-window' but doesn't move the point"
+  (interactive (find-tag-interactive "View tag other window: "))
+  (let ((window (get-buffer-window)))
+    (find-tag-other-window tagname next-p regexp-p)
+    (recenter 0)
+    (select-window window)))
+
+(defun view-tag-other-window-at-point (&optional next-p regexp-p)
+  "Same as `find-tag-other-window' but doesn't move the point"
+  (interactive)
+  (let ((window (get-buffer-window)))
+    (find-tag-other-window (thing-at-point 'symbol) next-p regexp-p)
+    (recenter 0)
+    (select-window window)))
+
 (provide 'init-ctags)
