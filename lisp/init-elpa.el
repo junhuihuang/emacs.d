@@ -113,14 +113,15 @@ But you may use safer HTTPS instead.")
 (if melpa-use-https-repo
     (setq package-archives
           '(;; uncomment below line if you need use GNU ELPA
-            ;; ("gnu" . "http://elpa.gnu.org/packages/")
-            ("melpa" . "http://melpa.org/packages/")
-            ("melpa-stable" . "http://stable.melpa.org/packages/")))
+            ;; ("gnu" . "https://elpa.gnu.org/packages/")
+            ("melpa" . "https://melpa.org/packages/")
+            ("melpa-stable" . "https://stable.melpa.org/packages/")))
   (setq package-archives
         '(;; uncomment below line if you need use GNU ELPA
-          ;; ("gnu" . "https://elpa.gnu.org/packages/")
-          ("melpa" . "https://melpa.org/packages/")
-          ("melpa-stable" . "https://stable.melpa.org/packages/"))))
+          ;; ("gnu" . "http://elpa.gnu.org/packages/")
+          ("melpa" . "http://melpa.org/packages/")
+          ("melpa-stable" . "http://stable.melpa.org/packages/")))
+  )
 
 
 ;; Un-comment below line if your extract https://github.com/redguardtoo/myelpa/archive/master.zip into ~/myelpa/
@@ -291,7 +292,7 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'company)
 (require-package 'company-c-headers)
 (require-package 'legalese)
-(require-package 'guide-key)
+(require-package 'which-key)
 (require-package 'simple-httpd)
 (require-package 'git-messenger)
 (require-package 'git-gutter)

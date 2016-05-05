@@ -3,7 +3,8 @@
 ;; use similar key bindings as init-evil.el
 (defhydra hydra-launcher (:color blue)
   "Launch"
-  ("mq" lookup-doc-in-man"man")
+  ("mq" lookup-doc-in-man "man")
+  ("hm" counsel-bookmark-goto "Bookmark")
   ("rr" counsel-recentf-goto "Recent files")
   ("wgt" wg-create-workgroup "New window layout")
   ("wgg" my-wg-switch-workgroup "Load window layout")
@@ -74,8 +75,10 @@
        ("o" gnus-mime-save-part "Save attachment at point o")
        ("w" gnus-article-wide-reply "Reply all S w")
        ("v" w3mext-open-with-mplayer "Open video/audio at point")
-       ("d" w3mext-download-rss-stream "CLI to download RSS stream")
-       ("b" w3mext-open-link-or-image-or-url "Open link under cursor or page URL with browser")
+       ("d" w3mext-download-rss-stream "Create shell command to download stream")
+       ("b" w3mext-open-link-or-image-or-url "Open link under cursor or page URL with external browser")
+       ("f" w3m-lnum-follow "Click link/button/input")
+       ("F" w3m-lnum-goto "Move focus to link/button/input")
        ("q" nil "cancel"))
      ;; y is not used by default
      (define-key gnus-article-mode-map "y" 'hydra-gnus-article/body)))

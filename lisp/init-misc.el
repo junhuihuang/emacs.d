@@ -213,41 +213,9 @@
 (setq comint-password-prompt-regexp (format "%s\\|^ *Password for .*: *$" comint-password-prompt-regexp))
 (add-hook 'comint-output-filter-functions 'comint-watch-for-password-prompt)
 
-;; {{ guide-key-mode
-(require 'guide-key)
-(setq guide-key/guide-key-sequence
-      '("C-x v" ; VCS commands
-        "C-c"
-        ",a"
-        ",b"
-        ",c"
-        ",d"
-        ",e"
-        ",f"
-        ",g"
-        ",h"
-        ",i"
-        ",j"
-        ",k"
-        ",l"
-        ",m"
-        ",n"
-        ",o"
-        ",p"
-        ",q"
-        ",r"
-        ",s"
-        "/" ; gnus limit
-        ",t"
-        ",u"
-        ",v"
-        ",w"
-        ",x"
-        ",y"
-        ",z"))
-(guide-key-mode 1)  ; Enable guide-key-mode
-(setq guide-key/recursive-key-sequence-flag t)
-(setq guide-key/idle-delay 0.5)
+;; {{ which-key-mode
+(require 'which-key)
+(which-key-mode)
 ;; }}
 
 (defun generic-prog-mode-hook-setup ()
@@ -556,9 +524,10 @@ buffer is not visiting a file."
 (setq tramp-default-method "ssh")
 (setq tramp-auto-save-directory "~/.backups/tramp/")
 (setq tramp-chunksize 8192)
+
 ;; @see https://github.com/syl20bnr/spacemacs/issues/1921
-(setq tramp-ssh-controlmaster-options
-      "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+;; If you tramp is hanging, you can uncomment below line.
+;; (setq tramp-ssh-controlmaster-options "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
 ;; }}
 
 ;; {{
@@ -657,11 +626,6 @@ If step is -1, go backward."
     (setq rlt (list b e))
     rlt))
 
-(defun diff-region-exit ()
-  (interactive)
-  (bury-buffer "*Diff-region-output*")
-  (winner-undo))
-
 (defun diff-region-tag-selected-as-a ()
   "Select a region to compare"
   (interactive)
@@ -693,29 +657,19 @@ If step is -1, go backward."
           (setq tmp (diff-region-format-region-boundary (region-beginning) (region-end)))
           (write-region (car tmp) (cadr tmp) fb))
 
-        (setq rlt-buf (get-buffer-create "*Diff-region-output*"))
         (when (and fa (file-exists-p fa) fb (file-exists-p fb))
           ;; save region A as file A
           (save-current-buffer
             (set-buffer (get-buffer-create "*Diff-regionA*"))
             (write-region (point-min) (point-max) fa))
           ;; diff NOW!
-          (setq diff-output (shell-command-to-string (format "diff -Nabur %s %s" fa fb)))
           ;; show the diff output
-          (if (string= diff-output "")
+          (if (string= (setq diff-output (shell-command-to-string (format "diff -Nabur %s %s" fa fb))) "")
               ;; two regions are same
               (message "Two regions are SAME!")
             ;; show the diff
-            (save-current-buffer
-              (switch-to-buffer-other-window rlt-buf)
-              (set-buffer rlt-buf)
-              (erase-buffer)
-              (insert diff-output)
-              (diff-mode)
-              (if (fboundp 'evil-local-set-key)
-                           (evil-local-set-key 'normal "q" 'diff-region-exit))
-              (local-set-key (kbd "C-c C-c") 'diff-region-exit)
-              )))
+            (diff-region-open-diff-output diff-output
+                                          "*Diff-region-output*")))
 
         ;; clean the temporary files
         (if (and fa (file-exists-p fa))
@@ -723,6 +677,9 @@ If step is -1, go backward."
         (if (and fb (file-exists-p fb))
             (delete-file fb)))
     (message "Please select region at first!")))
+
+;; cliphist.el
+(setq cliphist-use-ivy t)
 
 ;; {{ auto-save.el
 (require 'auto-save)

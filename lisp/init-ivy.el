@@ -215,7 +215,7 @@ Or else, find files since 24 weeks (6 months) ago."
     (cond
      ((and (string-match "^\\([0-9a-z]\\{40\\}\\) " str)
            (not (string= (setq hash (match-string 1 str)) "0000000000000000000000000000000000000000")))
-      (message "hash=%s" hash)
+      ;; (message "hash=%s" hash)
       (counsel-git-grep-or-find-api 'counsel--open-grepped-file
                                     (format "git --no-pager show --pretty=\"format:\" --name-only \"%s\"" hash)
                                     (format "files in commit %s:" (substring hash 0 7))
@@ -242,6 +242,18 @@ Or else, find files since 24 weeks (6 months) ago."
         (kill-new val)
         (message "%s => kill-ring" val))))
 
+(defun counsel-git-show-commit ()
+  (interactive)
+  (let ((log-command "git --no-pager log --date=short --pretty=format:'%h|%ad|%s|%an'")
+        collection)
+    (setq collection (split-string (shell-command-to-string log-command) "\n" t))
+    (ivy-read "git log:"
+              collection
+              :action (lambda (line)
+                        (let ((hash (car (split-string line "|" t)))
+                              show-command)
+                          (setq show-command (format "git --no-pager show --no-color %s" hash))
+                          (diff-region-open-diff-output (shell-command-to-string show-command) "*Git-show"))))))
 
 (defun counsel-recentf-goto ()
   "Recent files"
