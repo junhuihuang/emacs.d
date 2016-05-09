@@ -485,8 +485,8 @@ buffer is not visiting a file."
 (eval-after-load "evil"
   '(progn
      ;; press "d " to delete to the word
-     (define-key evil-motion-state-map (kbd "SPC") #'avy-goto-subword-1)
-     (define-key evil-normal-state-map (kbd "SPC") 'avy-goto-subword-1)))
+     (define-key evil-motion-state-map (kbd "SPC") #'avy-goto-char-2)
+     (define-key evil-normal-state-map (kbd "SPC") 'avy-goto-char-2)))
 ;; dired
 (eval-after-load "dired"
   '(progn
