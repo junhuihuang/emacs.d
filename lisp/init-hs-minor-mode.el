@@ -1,14 +1,16 @@
-(dolist (hook '(c-mode-common-hook
-                emacs-lisp-mode-hook
-                java-mode-hook
-                lisp-mode-hook
-                perl-mode-hook
-                sh-mode-hook
-                js-mode-hook
-                js2-mode-hook))
-      (add-hook hook (lambda ()
-                       (unless (is-buffer-file-temp)
-                         (hs-minor-mode)))))
+;; (dolist (hook '(c-mode-common-hook
+;;                 emacs-lisp-mode-hook
+;;                 java-mode-hook
+;;                 lisp-mode-hook
+;;                 perl-mode-hook
+;;                 sh-mode-hook
+;;                 js-mode-hook
+;;                 js2-mode-hook))
+;;       (add-hook hook (lambda ()
+;;                        (unless (is-buffer-file-temp)
+;;                          (hs-minor-mode)))))
+;;; stevens
+(add-hook 'prog-mode-hook 'hs-minor-mode)
 
 (setq hs-minor-mode-map
       (let ((map (make-sparse-keymap)))
