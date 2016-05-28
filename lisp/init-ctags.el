@@ -19,8 +19,7 @@
 ;; stevens
 ;; http://blog.binchen.org/posts/how-to-use-ctags-in-emacs-effectively-3.html
 (if (file-exists-p (expand-file-name "~/bemetoy_svn/BemeNew/poppy/BemetoyServer"))
-(setq tags-table-list '("~/bemetoy_svn/BemeNew/poppy/BemetoyServer/common/TAGS" "~/bemetoy_svn/BemeNew/poppy/common/TAGS"))
-(setq tags-table-list '("~/Dropbox/project/bemetoy_svn/BemeNew/poppy/BemetoyServer/common/TAGS" "~/Dropbox/project/bemetoy_svn/BemeNew/poppy/common/TAGS")))
+(setq tags-table-list '("~/bemetoy_svn/BemeNew/poppy/BemetoyServer/common/TAGS" "~/bemetoy_svn/BemeNew/poppy/common/TAGS" "~/bemetoy_svn/BemeNew/poppy/BemetoyServer/proto/TAGS"))
 
 
 ;; stevens
