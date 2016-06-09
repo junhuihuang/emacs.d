@@ -17,10 +17,12 @@ Yank the file name at the same time.  FILTER is function to filter the collectio
                 str))
 
     (unless no-keyword
+      ;; selected region contains no regular expression
       (setq keyword (if (region-active-p)
-                        (buffer-substring-no-properties (region-beginning) (region-end))
+                        (counsel-escape (buffer-substring-no-properties (region-beginning) (region-end)))
                       (read-string (concat "Enter " hint " pattern:" )))))
 
+    ;; (message "git-cmd=%s keyword=%s" (if no-keyword git-cmd (format git-cmd keyword)) keyword)
     (setq collection (split-string (shell-command-to-string (if no-keyword
                                                                 git-cmd
                                                               (format git-cmd keyword)))
@@ -78,10 +80,40 @@ SLOW when more than 20 git blame process start."
   (interactive "P")
   (counsel-git-grep-or-find-api 'counsel--open-grepped-file
                                 "git --no-pager grep --full-name -n --no-color -i -e \"%s\""
-                                "grep"
+                                "grep by author"
                                 open-another-window
                                 nil
                                 'counsel--filter-grepped-by-author))
+
+(defun counsel-git-show-file (&optional open-another-window)
+  "Find file in HEAD commit or whose commit hash is selected region.
+If OPEN-ANOTHER-WINDOW is not nil, results are displayed in new window."
+  (interactive "P")
+  (let (fn)
+    (setq fn (lambda (open-another-window val)
+               (funcall (if open-another-window 'find-file-other-window 'find-file) val)))
+    (counsel-git-grep-or-find-api fn
+                                  (format "git --no-pager diff-tree --no-commit-id --name-only -r %s"
+                                          (if (region-active-p)
+                                              (buffer-substring-no-properties (region-beginning) (region-end))
+                                            "HEAD"))
+                                  "files from `git-show' "
+                                  open-another-window
+                                  t)))
+
+
+(defun counsel-git-diff-file (&optional open-another-window)
+  "Find file in `git diff'.
+If OPEN-ANOTHER-WINDOW is not nil, results are displayed in new window."
+  (interactive "P")
+  (let (fn)
+    (setq fn (lambda (open-another-window val)
+               (funcall (if open-another-window 'find-file-other-window 'find-file) val)))
+    (counsel-git-grep-or-find-api fn
+                                  "git --no-pager diff --name-only"
+                                  "files from `git-diff' "
+                                  open-another-window
+                                  t)))
 
 (defun counsel-git-find-file (&optional open-another-window)
   "Find file in the current git repository.
@@ -94,6 +126,52 @@ If OPEN-ANOTHER-WINDOW is not nil, results are displayed in new window."
                                   "git ls-tree -r HEAD --name-status | grep \"%s\""
                                   "file"
                                   open-another-window)))
+
+(defun counsel-escape (keyword)
+  (setq keyword (replace-regexp-in-string "\"" "\\\\\"" keyword))
+  (setq keyword (replace-regexp-in-string "\\?" "\\\\\?" keyword))
+  (setq keyword (replace-regexp-in-string "\\$" "\\\\\$" keyword))
+  (setq keyword (replace-regexp-in-string "\\*" "\\\\\*" keyword))
+  (setq keyword (replace-regexp-in-string "\\." "\\\\\." keyword))
+  (setq keyword (replace-regexp-in-string "\\[" "\\\\\[" keyword))
+  (setq keyword (replace-regexp-in-string "\\]" "\\\\\]" keyword))
+  keyword)
+
+(defun counsel-replace-current-line (leading-spaces content)
+  (beginning-of-line)
+  (kill-line)
+  (insert (concat leading-spaces content))
+  (end-of-line))
+
+(defun counsel-git-grep-complete-line ()
+  (interactive)
+  (let* (cmd
+        (cur-line (buffer-substring-no-properties (line-beginning-position)
+                                                  (line-end-position)))
+        (default-directory (locate-dominating-file
+                            default-directory ".git"))
+        keyword
+        (leading-spaces "")
+        collection)
+    (setq keyword (counsel-escape (if (region-active-p)
+                                      (buffer-substring-no-properties (region-beginning)
+                                                                      (region-end))
+                                    (replace-regexp-in-string "^[ \t]*" "" cur-line))))
+    ;; grep lines without leading/trailing spaces
+    (setq cmd (format "git --no-pager grep -I -h --no-color -i -e \"^[ \\t]*%s\" | sed s\"\/^[ \\t]*\/\/\" | sed s\"\/[ \\t]*$\/\/\" | sort | uniq" keyword))
+    (when (setq collection (split-string (shell-command-to-string cmd) "\n" t))
+      (if (string-match "^\\([ \t]*\\)" cur-line)
+          (setq leading-spaces (match-string 1 cur-line)))
+      (cond
+       ((= 1 (length collection))
+        (counsel-replace-current-line leading-spaces (car collection)))
+       ((> (length collection) 1)
+        (ivy-read "lines:"
+                  collection
+                  :action (lambda (l)
+                            (counsel-replace-current-line leading-spaces l))))))
+    ))
+(global-set-key (kbd "C-x C-l") 'counsel-git-grep-complete-line)
 
 (defun counsel-git-grep-yank-line (&optional insert-line)
   "Grep in the current git repository and yank the line.
@@ -242,18 +320,10 @@ Or else, find files since 24 weeks (6 months) ago."
         (kill-new val)
         (message "%s => kill-ring" val))))
 
-(defun counsel-git-show-commit ()
-  (interactive)
-  (let ((log-command "git --no-pager log --date=short --pretty=format:'%h|%ad|%s|%an'")
-        collection)
-    (setq collection (split-string (shell-command-to-string log-command) "\n" t))
-    (ivy-read "git log:"
-              collection
-              :action (lambda (line)
-                        (let ((hash (car (split-string line "|" t)))
-                              show-command)
-                          (setq show-command (format "git --no-pager show --no-color %s" hash))
-                          (diff-region-open-diff-output (shell-command-to-string show-command) "*Git-show"))))))
+(defun counsel-git-show-hash-diff-mode (hash)
+  (let ((show-cmd (format "git --no-pager show --no-color %s" hash)))
+    (diff-region-open-diff-output (shell-command-to-string show-cmd)
+                                  "*Git-show")))
 
 (defun counsel-recentf-goto ()
   "Recent files"

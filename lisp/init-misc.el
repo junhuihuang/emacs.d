@@ -215,7 +215,8 @@
 
 ;; {{ which-key-mode
 (require 'which-key)
-(which-key-mode)
+(setq which-key-separator ":")
+(which-key-mode 1)
 ;; }}
 
 (defun generic-prog-mode-hook-setup ()
@@ -223,16 +224,16 @@
     ;; fic-mode has performance issue on 5000 line C++, we can always use swiper instead
     ;; don't spell check double words
     (setq flyspell-check-doublon nil)
-	;; enable for all programming modes
-	;; http://emacsredux.com/blog/2013/04/21/camelcase-aware-editing/
-	(subword-mode)
+    ;; enable for all programming modes
+    ;; http://emacsredux.com/blog/2013/04/21/camelcase-aware-editing/
+    (subword-mode)
     (setq-default electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
     (electric-pair-mode 1)
 
     ;; eldoc, show API doc in minibuffer echo area
-	(turn-on-eldoc-mode)
-	;; show trailing spaces in a programming mod
-	(setq show-trailing-whitespace t)))
+    ;; (turn-on-eldoc-mode)
+    ;; show trailing spaces in a programming mod
+    (setq show-trailing-whitespace t)))
 
 (add-hook 'prog-mode-hook 'generic-prog-mode-hook-setup)
 ;; some major-modes NOT inherited from prog-mode
@@ -286,23 +287,34 @@
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 
+(defun my-download-subtitles ()
+  (interactive)
+  (shell-command "periscope.py -l en *.mkv *.mp4 *.avi &"))
+
+
 ;; {{ @see http://emacsredux.com/blog/2013/04/21/edit-files-as-root/
 (defun sudo-edit (&optional arg)
   "Edit currently visited file as root.
 With a prefix ARG prompt for a file to visit.
 Will also prompt for a file to visit if current
-buffer is not visiting a file."
+buffer is not visiting a file.
+You may insert below line into ~/.authinfo.gpg to type less:
+machine 127.0.0.1 login root password ****** port sudo
+See \"Reusing passwords for several connections\" from INFO.
+"
   (interactive "P")
   (if (or arg (not buffer-file-name))
-      (find-file (concat "/sudo:root@localhost:"
-                         (ido-read-file-name "Find file(as root): ")))
-    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+      (find-file (concat "/sudo:root@127.0.0.1:"
+                         (read-file-name "Find file(as root): ")))
+    (find-alternate-file (concat "/sudo:@127.0.0.1:"
+                                 buffer-file-name))))
 
 (defadvice ido-find-file (after find-file-sudo activate)
   "Find file as root if necessary."
   (unless (and buffer-file-name
                (file-writable-p buffer-file-name))
-    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+    (find-alternate-file (concat "/sudo:root@127.0.0.1:"
+                                 buffer-file-name))))
 ;; }}
 
 ;; input open source license
@@ -415,6 +427,12 @@ buffer is not visiting a file."
       recentf-exclude '("/tmp/"
                         "/ssh:"
                         "/sudo:"
+                        ;; ctags
+                        "/TAGS$"
+                        ;; global
+                        "/GTAGS$"
+                        "/GRAGS$"
+                        "/GPATH$"
                         ;; ~/.emacs.d/**/*.el included
                         ;; "/home/[a-z]\+/\\.[a-df-z]" ; configuration file should not be excluded
                         ))
@@ -487,6 +505,7 @@ buffer is not visiting a file."
      ;; press "d " to delete to the word
      (define-key evil-motion-state-map (kbd "SPC") #'avy-goto-char-2)
      (define-key evil-normal-state-map (kbd "SPC") 'avy-goto-char-2)))
+
 ;; dired
 (eval-after-load "dired"
   '(progn
@@ -520,9 +539,8 @@ buffer is not visiting a file."
     rlt))
 
 ;; {{ tramp setup
-;; @see http://www.quora.com/Whats-the-best-way-to-edit-remote-files-from-Emacs
-(setq tramp-default-method "ssh")
-(setq tramp-auto-save-directory "~/.backups/tramp/")
+(add-to-list 'backup-directory-alist
+             (cons tramp-file-name-regexp nil))
 (setq tramp-chunksize 8192)
 
 ;; @see https://github.com/syl20bnr/spacemacs/issues/1921
@@ -680,6 +698,16 @@ If step is -1, go backward."
 
 ;; cliphist.el
 (setq cliphist-use-ivy t)
+
+;; subtitles.el
+(autoload 'srt-renumber-subtitles "subtitles" "" t)
+(autoload 'srt-offset-subtitles "subtitles" "" t)
+(autoload 'srt-mult-subtitles "subtitles" "" t)
+(autoload 'srt-convert-sub-to-srt "subtitles" "" t)
+
+;; fastdef.el
+(autoload 'fastdef-insert "fastdef" nil t)
+(autoload 'fastdef-insert-from-history "fastdef" nil t)
 
 ;; {{ auto-save.el
 (require 'auto-save)
