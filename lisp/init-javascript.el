@@ -16,7 +16,7 @@
       '(("Controller" "[. \t]controller([ \t]*['\"]\\([^'\"]+\\)" 1)
         ("Controller" "[. \t]controllerAs:[ \t]*['\"]\\([^'\"]+\\)" 1)
         ("Filter" "[. \t]filter([ \t]*['\"]\\([^'\"]+\\)" 1)
-        ("State" "[. \t]state([ \t]*['\"]\\([^'\"]+\\)" 1)
+        ("State" "[. \t]state[(:][ \t]*['\"]\\([^'\"]+\\)" 1)
         ("Factory" "[. \t]factory([ \t]*['\"]\\([^'\"]+\\)" 1)
         ("Service" "[. \t]service([ \t]*['\"]\\([^'\"]+\\)" 1)
         ("Module" "[. \t]module( *['\"]\\([a-zA-Z0-9_.]+\\)['\"], *\\[" 1)
@@ -40,7 +40,7 @@
     (imenu--generic-function javascript-common-imenu-regex-list)))
 
 (defun mo-js-mode-hook ()
-  (when (and  (not (is-buffer-file-temp)) (not (derived-mode-p 'js2-mode)))
+  (when (and (not (is-buffer-file-temp)) (not (derived-mode-p 'js2-mode)))
     ;; js-mode only setup, js2-mode inherit from js-mode since v20150909
     (setq imenu-create-index-function 'mo-js-imenu-make-index)
     ;; https://github.com/illusori/emacs-flymake
@@ -49,6 +49,8 @@
     ;; (add-to-list 'flymake-allowed-file-name-masks
     ;;              '("\\.json\\'" flymake-javascript-init))
     (message "mo-js-mode-hook called")
+    (require 'js-comint)
+    (require 'js-doc)
     (flymake-mode 1)))
 
 (add-hook 'js-mode-hook 'mo-js-mode-hook)
@@ -150,6 +152,59 @@ The line numbers of items will be extracted."
                                  js2-imenu-original-item-lines)
           (setq r nil))))
   r)
+
+(defun my-validate-json-or-js-expression (&optional not-json-p)
+  "Validate buffer or select region as JSON.
+If NOT-JSON-P is not nil, validate as Javascript expression instead of JSON."
+  (interactive "P")
+  (let* ((json-exp (if (region-active-p) (buffer-substring-no-properties (region-beginning) (region-end))
+                     (buffer-substring-no-properties (point-min) (point-max))))
+         (jsbuf-offet (if not-json-p 0 (length "var a=")))
+         errs
+         first-err
+         (first-err-pos (if (region-active-p) (region-beginning) 0)))
+    (unless not-json-p
+      (setq json-exp (format "var a=%s;"  json-exp)))
+    (with-temp-buffer
+      (insert json-exp)
+      (unless (featurep 'js2-mode)
+        (require 'js2-mode))
+      (js2-parse)
+      (setq errs (js2-errors))
+      (cond
+       ((not errs)
+        (message "NO error found. Good job!"))
+       (t
+        ;; yes, first error in buffer is the last element in errs
+        (setq first-err (car (last errs)))
+        (setq first-err-pos (+ first-err-pos (- (cadr first-err) jsbuf-offet)))
+        (message "%d error(s), first at buffer position %d: %s"
+                 (length errs)
+                 first-err-pos
+                 (js2-get-msg (caar first-err))))))
+    (if first-err (goto-char first-err-pos))))
+
+(defun my-print-json-path (&optional hardcoded-array-index)
+  "Print the path to the JSON value under point, and save it in the kill ring.
+If HARDCODED-ARRAY-INDEX provided, array index in JSON path is replaced with it."
+  (interactive "P")
+  (cond
+   ((memq major-mode '(js2-mode))
+    (js2-print-json-path hardcoded-array-index))
+   (t
+    (let* ((cur-pos (point))
+           (str (buffer-substring-no-properties (point-min) (point-max))))
+      (when (string= "json" (file-name-extension buffer-file-name))
+        (setq str (format "var a=%s;" str))
+        (setq cur-pos (+ cur-pos (length "var a="))))
+      (unless (featurep 'js2-mode)
+        (require 'js2-mode))
+      (with-temp-buffer
+        (insert str)
+        (js2-init-scanner)
+        (js2-do-parse)
+        (goto-char cur-pos)
+        (js2-print-json-path))))))
 
 (defun js2-imenu--remove-duplicate-items (extra-rlt)
   (delq nil (mapcar 'js2-imenu--check-single-item extra-rlt)))
@@ -254,13 +309,14 @@ If HARDCODED-ARRAY-INDEX provided, array index in JSON path is replaced with it.
     (js2-imenu-extras-mode)
     (setq mode-name "JS2")
     (require 'js2-refactor)
+    (require 'js-doc)
     (js2-refactor-mode 1)
     (flymake-mode -1)
-    (require 'js-doc)
     (define-key js2-mode-map "\C-cd" 'js-doc-insert-function-doc)
-    (define-key js2-mode-map "@" 'js-doc-insert-tag)))
+    (define-key js2-mode-map "@" 'js-doc-insert-tag)
+    ;; @see https://github.com/mooz/js2-mode/issues/350
+    (setq forward-sexp-function nil)))
 
-(autoload 'js2-mode "js2-mode" nil t)
 (add-hook 'js2-mode-hook 'my-js2-mode-setup)
 
 (setq auto-mode-alist (cons '("\\.json$" . js-mode) auto-mode-alist))
@@ -281,19 +337,31 @@ If HARDCODED-ARRAY-INDEX provided, array index in JSON path is replaced with it.
 (add-hook 'coffee-mode-hook 'flymake-coffee-load)
 
 ;; {{ js-beautify
-(defun js-beautify ()
-  "Beautify a region of javascript using the code from jsbeautify.org.
-sudo pip install jsbeautifier"
-  (interactive)
-  (let ((orig-point (point)))
-    (unless (mark)
-      (mark-defun))
-    (shell-command-on-region (point)
-                             (mark)
+(defun js-beautify (&optional indent-size)
+  "Beautify selected region or whole buffer with js-beautify.
+INDENT-SIZE decide the indentation level.
+`sudo pip install jsbeautifier` to install js-beautify.'"
+  (interactive "P")
+  (let* ((orig-point (point))
+         (b (if (region-active-p) (region-beginning) (point-min)))
+         (e (if (region-active-p) (region-end) (point-max)))
+         (js-beautify (if (executable-find "js-beautify") "js-beautify"
+                        "jsbeautify")))
+    ;; detect indentation level
+    (unless indent-size
+      (setq indent-size (cond
+                         ((memq major-mode '(js-mode javascript-mode))
+                          js-indent-level)
+                         ((memq major-mode '(web-mode))
+                          web-mode-code-indent-offset)
+                         (t
+                          js2-basic-offset))))
+    ;; do it!
+    (shell-command-on-region b e
                              (concat "js-beautify"
                                      " --stdin "
                                      " --jslint-happy --brace-style=end-expand --keep-array-indentation "
-                                     (format " --indent-size=%d " js2-basic-offset))
+                                     (format " --indent-size=%d " indent-size))
                              nil t)
     (goto-char orig-point)))
 ;; }}

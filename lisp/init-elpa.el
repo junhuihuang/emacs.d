@@ -8,7 +8,8 @@ But you may use safer HTTPS instead.")
 ;; List of VISIBLE packages from melpa-unstable (http://melpa.org)
 ;; Feel free to add more packages!
 (defvar melpa-include-packages
-  '(bbdb
+  '(ace-mc
+    bbdb
     color-theme
     wgrep
     robe
@@ -143,12 +144,14 @@ ARCHIVE is the string name of the package archive.")
 
 (package-initialize)
 
+(require-package 'async)
 (require-package 'dash) ; required by string-edit
 ; color-theme 6.6.1 in elpa is buggy
 (require-package 'color-theme)
 (require-package 'auto-compile)
 (require-package 'avy)
-(require-package 'swiper)
+(require-package 'auto-yasnippet)
+(require-package 'ace-link)
 (require-package 'expand-region) ;; I prefer stable version
 (require-package 'fringe-helper)
 (require-package 'haskell-mode)

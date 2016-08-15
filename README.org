@@ -155,7 +155,14 @@ Please ignore any related error message. For example, if aspell and hunspell are
 - Required by sdcv.el
 - Install through OS package manager
 - Run =curl http://abloz.com/huzheng/stardict-dic/dict.org/stardict-dictd_www.dict.org_wn-2.4.2.tar.bz2 | tar jx -C ~/.stardict/dic= to install dictionary
-
+**** [[https://github.com/svent/sift][sift]]
+- Quickest to search text in files
+- Required by `M-x my-grep`
+- Install through OS package manager
+**** [[https://github.com/ggreer/the_silver_searcher][the_silver_search (ag)]]
+- Search text in files
+- Required by `M-x my-grep` if [[https://github.com/svent/sift][sift]] not available
+- Install through OS package manager
 * Tutorial (OPTIONAL)
 =~/.emacs.d/lisp/init-evil.el= contains my most frequently used key bindings.
 ** Basic tutorial
@@ -275,7 +282,7 @@ Type below command in shell:
 http_proxy=http://yourname:passwd@proxy.company.com:8080 emacs -nw
 #+end_src
 ** Government blocks the internet?
-People in China, North Korea, Cuba, Iran need [[http://code.google.com/p/goagent/][goagent]]. Run command =http_proxy=http://127.0.0.1:8087 emacs -nw= in shell after starting goagent server.
+You may need [[https://github.com/goagent/goagent][goagent]]. Run command =http_proxy=http://127.0.0.1:8087 emacs -nw= in shell after starting goagent server.
 ** Email
 If you use Gnus for email, check init-gnus.el and read [[http://blog.binchen.org/?p=403][my Gnus tutorial]].
 ** Cannot download ELPA packages?
@@ -308,7 +315,7 @@ In "friendly" Visual C++, you need do [[http://www.codeproject.com/Tips/588022/U
 
 ** Color theme
 *** Preview color theme
-Check [[http://emacsthemes.caisah.info/]].
+Check [[https://emacsthemes.com/]].
 
 Write down the name of color theme (for example, molokai).
 
@@ -382,10 +389,9 @@ Emacs is *portable* on any platform. So you can install Emacs even when you are 
 - Never turn off any bundled mode if it's on by default. Future version of Emacs may assume it's on. Tweak its flag in mode hook instead!
 - Git skills are *extremely useful*. Please read the chapters "Git Basics", "Git Branching", "Git Tools" from [[https://git-scm.com/book/en/][Pro Git]]
 * Report bug
-Check [[http://www.emacswiki.org/emacs/][EmacsWiki]] and my FAQ at first, please.
+- Check [[http://www.emacswiki.org/emacs/][EmacsWiki]] and my FAQ at first to find a solution, please
+- If your issue is still NOT resolved, restart Emacs with option =---debug-init=, run =M-x toggle-debug-on-error= in Emacs, reproduce the issue
+- Send the error messages to the original developer if it's third party package issue
+- If you are *sure* it's my issue, file bug report at [[https://github.com/redguardtoo/emacs.d]]. Don't email me directly!
 
-File bug report at [[https://github.com/redguardtoo/emacs.d]]. Don't email me directly!
-
-Please contact the original developer if you find any bug from third party packages.
-
-Bug report should include details (OS, Emacs version ...) plus the output of =emacs --debug-init= at minimum.
+Bug report should include details (OS, Emacs version ...).
