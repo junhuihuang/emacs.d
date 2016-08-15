@@ -68,11 +68,13 @@
   (require 'init-uniquify)
   (require 'init-ibuffer)
   (require 'init-flymake)
+  (require 'init-helm)
   (require 'init-ivy)
   (require 'init-hippie-expand)
   (require 'init-windows)
   (require 'init-sessions)
-  (require 'init-git)
+  ;; stevens
+  ;; (require 'init-git)
   (require 'init-crontab)
   (require 'init-markdown)
   (require 'init-erlang)
@@ -108,7 +110,8 @@
   (require 'init-web-mode)
   (require 'init-slime)
   (require 'init-company)
-  (require 'init-chinese-pyim) ;; cannot be idle-required
+  ;; stevens
+  ;; (require 'init-chinese-pyim) ;; cannot be idle-required
   ;; need statistics of keyfreq asap
   (require 'init-keyfreq)
   (require 'init-httpd)
