@@ -33,11 +33,8 @@
   ;; C code:
   ;;   if(1) // press ENTER here, zero means no indentation
   (fix-c-indent-offset-according-to-syntax-context 'substatement 0)
-<<<<<<< HEAD
   (fix-c-indent-offset-according-to-syntax-context 'innamespace [0])
-=======
   ;;   void fn() // press ENTER here, zero means no indentation
->>>>>>> binchen/master
   (fix-c-indent-offset-according-to-syntax-context 'func-decl-cont 0))
 
 (defun my-c-mode-setup ()
