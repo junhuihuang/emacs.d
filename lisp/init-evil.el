@@ -649,24 +649,25 @@ If the character before and after CH is space or tab, CH is NOT slash"
 ;; }}
 
 ;; {{ Use `;` as leader key, for searching something
-(nvmap :prefix ";"
-       ";" 'avy-goto-subword-1
-       "db" 'sdcv-search-pointer ; in buffer
-       "dt" 'sdcv-search-input+ ;; in tip
-       "dd" 'my-lookup-dict-org
-       "dw" 'define-word
-       "dp" 'define-word-at-point
-       "mm" 'lookup-doc-in-man
-       "gg" 'w3m-google-search
-       "gf" 'w3m-google-by-filetype
-       "gd" 'w3m-search-financial-dictionary
-       "gj" 'w3m-search-js-api-mdn
-       "ga" 'w3m-java-search
-       "gh" 'w3mext-hacker-search ; code search in all engines with firefox
-       "gq" 'w3m-stackoverflow-search
-       "mm" 'mpc-which-song
-       "mn" 'mpc-next-prev-song
-       "mp" '(lambda () (interactive) (mpc-next-prev-song t)))
+;;; stevens disable
+;;; (nvmap :prefix ";"
+;;;        ";" 'avy-goto-subword-1
+;;;        "db" 'sdcv-search-pointer ; in buffer
+;;;        "dt" 'sdcv-search-input+ ;; in tip
+;;;        "dd" 'my-lookup-dict-org
+;;;        "dw" 'define-word
+;;;        "dp" 'define-word-at-point
+;;;        "mm" 'lookup-doc-in-man
+;;;        "gg" 'w3m-google-search
+;;;        "gf" 'w3m-google-by-filetype
+;;;        "gd" 'w3m-search-financial-dictionary
+;;;        "gj" 'w3m-search-js-api-mdn
+;;;        "ga" 'w3m-java-search
+;;;        "gh" 'w3mext-hacker-search ; code search in all engines with firefox
+;;;        "gq" 'w3m-stackoverflow-search
+;;;        "mm" 'mpc-which-song
+;;;        "mn" 'mpc-next-prev-song
+;;;        "mp" '(lambda () (interactive) (mpc-next-prev-song t)))
 ;; }}
 
 ;; {{ remember what we searched
