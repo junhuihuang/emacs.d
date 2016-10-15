@@ -14,11 +14,23 @@
 (defun cp-filename-of-current-buffer ()
   "Copy file name (NOT full path) into the yank ring and OS clipboard"
   (interactive)
-  (let (filename)
-    (when buffer-file-name
-      (setq filename (file-name-nondirectory buffer-file-name))
+  (when buffer-file-name
+    (let* (filename (file-name-nondirectory buffer-file-name))
       (copy-yank-str filename)
       (message "filename %s => clipboard & yank ring" filename))))
+
+(defun cp-ffip-ivy-last ()
+  "Copy visible keys of `ivy-last' into `kill-ring' and clipboard."
+  (interactive)
+  (unless (featurep 'find-file-in-project)
+    (require 'find-file-in-project))
+  (when ffip-ivy-last-saved
+    (copy-yank-str
+     (mapconcat (lambda (e)
+                  (format "%S" (if (consp e) (car e) e)))
+                (ivy-state-collection ffip-ivy-last-saved)
+                "\n"))
+    (message "%d items from ivy-last => clipboard & yank ring" (length ivy-last))))
 
 (defun cp-filename-line-number-of-current-buffer ()
   "Copy file:line into the yank ring and clipboard"
@@ -78,7 +90,7 @@ If N is 2, paste into kill-ring too"
              (not (eolp))
              (not (eobp)))
     (forward-char))
-  (let ((str (simpleclip-get-contents)))
+  (let* ((str (simpleclip-get-contents)))
     (cond
      ((not n)
       ;; do nothing

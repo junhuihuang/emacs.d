@@ -24,13 +24,13 @@
 (setq evil-default-cursor t)
 
 ;; {{ multiple-cursors
-;; step 1, select thing in visual-mode
-;; step 2, `mc/mark-all-like-this' or `mc/mark-all-like-this-in-defun'
+;; step 1, select thing in visual-mode (OPTIONAL)
+;; step 2, `mc/mark-all-like-dwim' or `mc/mark-all-like-this-in-defun'
 ;; step 3, `ace-mc-add-multiple-cursors' to remove cursor, press RET to confirm
 ;; step 4, press s or S to start replace
 ;; step 5, press C-g to quit multiple-cursors
 (define-key evil-visual-state-map (kbd "mn") 'mc/mark-next-like-this)
-(define-key evil-visual-state-map (kbd "ma") 'mc/mark-all-like-this)
+(define-key evil-visual-state-map (kbd "ma") 'mc/mark-all-like-this-dwim)
 (define-key evil-visual-state-map (kbd "md") 'mc/mark-all-like-this-in-defun)
 (define-key evil-visual-state-map (kbd "mm") 'ace-mc-add-multiple-cursors)
 (define-key evil-visual-state-map (kbd "ms") 'ace-mc-add-single-cursor)
@@ -297,11 +297,13 @@ If the character before and after CH is space or tab, CH is NOT slash"
         (fundamental-mode . emacs)
         (weibo-timeline-mode . emacs)
         (weibo-post-mode . emacs)
+        (woman-mode . emacs)
         (sr-mode . emacs)
         (profiler-report-mode . emacs)
         (dired-mode . emacs)
         (compilation-mode . emacs)
         (speedbar-mode . emacs)
+        (ivy-occur-mode . emacs)
         (messages-buffer-mode . normal)
         (magit-commit-mode . normal)
         (magit-diff-mode . normal)
@@ -319,7 +321,7 @@ If the character before and after CH is space or tab, CH is NOT slash"
 
 (define-key evil-normal-state-map "Y" (kbd "y$"))
 (define-key evil-normal-state-map "go" 'goto-char)
-(define-key evil-normal-state-map (kbd "M-y") 'browse-kill-ring)
+(define-key evil-normal-state-map (kbd "M-y") 'counsel-browse-kill-ring)
 (define-key evil-normal-state-map (kbd "C-]") 'etags-select-find-tag-at-point)
 (define-key evil-visual-state-map (kbd "C-]") 'etags-select-find-tag-at-point)
 ;; add by stevens
@@ -379,6 +381,7 @@ If the character before and after CH is space or tab, CH is NOT slash"
        "bs" '(lambda () (interactive) (goto-edge-by-comparing-font-face -1))
        "es" 'goto-edge-by-comparing-font-face
        "vj" 'my-validate-json-or-js-expression
+       "mcr" 'my-create-regex-from-kill-ring
        "ntt" 'neotree-toggle
        "ntf" 'neotree-find ; open file in current buffer in neotree
        "ntd" 'neotree-project-dir
@@ -414,7 +417,7 @@ If the character before and after CH is space or tab, CH is NOT slash"
        "hp" 'etags-select-find-tag
        "mm" 'counsel-bookmark-goto
        "mk" 'bookmark-set
-       "yy" 'browse-kill-ring
+       "yy" 'counsel-browse-kill-ring
        "gf" 'counsel-git-find-file
        "gc" 'counsel-git-find-file-committed-with-line-at-point
        "gl" 'counsel-git-grep-yank-line
@@ -492,17 +495,9 @@ If the character before and after CH is space or tab, CH is NOT slash"
        "ulb" 'uniquify-all-lines-buffer
        "lj" 'moz-load-js-file-and-send-it
        "mr" 'moz-console-clear
-       "rnr" 'rinari-web-server-restart
-       "rnc" 'rinari-find-controller
-       "rnv" 'rinari-find-view
-       "rna" 'rinari-find-application
-       "rnk" 'rinari-rake
-       "rnm" 'rinari-find-model
-       "rnl" 'rinari-find-log
-       "rno" 'rinari-console
-       "rnt" 'rinari-find-test
        "fs" 'ffip-save-ivy-last
        "fr" 'ffip-ivy-resume
+       "fc" 'cp-ffip-ivy-last
        "ss" 'swiper-the-thing ; http://oremacs.com/2015/03/25/swiper-0.2.0/ for guide
        "hst" 'hs-toggle-fold
        "hsa" 'hs-toggle-fold-all
@@ -522,13 +517,6 @@ If the character before and after CH is space or tab, CH is NOT slash"
        "ne" 'flymake-goto-next-error
        "fw" 'ispell-word
        "bc" '(lambda () (interactive) (wxhelp-browse-class-or-api (thing-at-point 'symbol)))
-       "ma" 'mc/mark-all-like-this-in-defun
-       "mw" 'mc/mark-all-words-like-this-in-defun
-       "ms" 'mc/mark-all-symbols-like-this-in-defun
-       ;; "opt" is occupied by my-open-project-todo
-       ;; recommended in html
-       "md" 'mc/mark-all-like-this-dwim
-       "me" 'mc/edit-lines
        "oag" 'org-agenda
        "otl" 'org-toggle-link-display
        "om" 'toggle-org-or-message-mode
@@ -540,7 +528,6 @@ If the character before and after CH is space or tab, CH is NOT slash"
        "bj" 'buf-move-down
        "bh" 'buf-move-left
        "bl" 'buf-move-right
-       "so" 'sos
        "0" 'select-window-0
        "1" 'select-window-1
        "2" 'select-window-2
@@ -551,7 +538,7 @@ If the character before and after CH is space or tab, CH is NOT slash"
        "7" 'select-window-7
        "8" 'select-window-8
        "9" 'select-window-9
-       "xm" 'smex
+       "xm" 'my-M-x
        "xx" 'er/expand-region
        "xf" 'ido-find-file
        "xb" 'ido-switch-buffer
@@ -592,10 +579,13 @@ If the character before and after CH is space or tab, CH is NOT slash"
        "kk" 'scroll-other-window
        "jj" 'scroll-other-window-up
        "yy" 'hydra-launcher/body
+       "hh" 'multiple-cursors-hydra/body
        "tt" 'my-toggle-indentation
        "gs" 'git-gutter:set-start-revision
        "gh" 'git-gutter-reset-to-head-parent
        "gr" 'git-gutter-reset-to-default
+       "ps" 'profiler-start
+       "pr" 'profiler-report
        "ud" 'my-gud-gdb
        "uk" 'gud-kill-yes
        "ur" 'gud-remove
@@ -607,7 +597,13 @@ If the character before and after CH is space or tab, CH is NOT slash"
        "us" 'gud-step
        "ui" 'gud-stepi
        "uc" 'gud-cont
-       "uf" 'gud-finish)
+       "uf" 'gud-finish
+       "ma" 'mc/mark-all-like-this-dwim
+       "md" 'mc/mark-all-like-this-in-defun
+       "mm" 'ace-mc-add-multiple-cursors
+       "mn" 'mc/mark-next-like-this
+       "ms" 'mc/skip-to-next-like-this
+       "me" 'mc/edit-lines)
 
 ;; per-major-mode leader setup
 (general-define-key :states '(normal motion insert emacs)
@@ -718,4 +714,7 @@ If the character before and after CH is space or tab, CH is NOT slash"
 ;; (setq evil-exchange-key (kbd "zx"))
 (evil-exchange-install)
 ;; }}
+
+;; }}
+
 (provide 'init-evil)

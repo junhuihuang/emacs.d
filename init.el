@@ -1,5 +1,12 @@
 ;; -*- coding: utf-8 -*-
 ;(defvar best-gc-cons-threshold gc-cons-threshold "Best default gc threshold value. Should't be too big.")
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
 (defvar best-gc-cons-threshold 4000000 "Best default gc threshold value. Should't be too big.")
 ;; don't GC during startup to save time
 (setq gc-cons-threshold most-positive-fixnum)
@@ -80,7 +87,6 @@
   (require 'init-erlang)
   (require 'init-javascript)
   (require 'init-org)
-  (require 'init-org-mime)
   (require 'init-css)
   (require 'init-python-mode)
   (require 'init-haskell)
@@ -100,6 +106,7 @@
   (require 'init-clipboard)
   ;; use evil mode (vi key binding)
   (require 'init-evil)
+  (require 'init-multiple-cursors)
   (require 'init-sh)
   (require 'init-ctags)
   (require 'init-bbdb)
@@ -147,15 +154,9 @@
     (message "Emacs startup time: %d seconds."
              (time-to-seconds (time-since emacs-load-start-time))))
 
-  ;;----------------------------------------------------------------------------
-  ;; Locales (setting them earlier in this file doesn't work in X)
-  ;;----------------------------------------------------------------------------
-  (require 'init-locales)
-
   ;; my personal setup, other major-mode specific setup need it.
   ;; It's dependent on init-site-lisp.el
-  (if (file-exists-p "~/.custom.el") (load-file "~/.custom.el"))
-  )
+  (if (file-exists-p "~/.custom.el") (load-file "~/.custom.el")))
 
 ;; @see https://www.reddit.com/r/emacs/comments/4q4ixw/how_to_forbid_emacs_to_touch_configuration_files/
 (setq custom-file (concat user-emacs-directory "custom-set-variables.el"))

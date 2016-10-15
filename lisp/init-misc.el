@@ -30,9 +30,6 @@
 ;; open header file under cursor
 (global-set-key (kbd "C-x C-o") 'ffap)
 
-;; salesforce
-(add-to-list 'auto-mode-alist '("\\.cls\\'" . apex-mode))
-(add-to-list 'auto-mode-alist '("\\.trigger\\'" . apex-mode))
 ;; java
 (add-to-list 'auto-mode-alist '("\\.aj\\'" . java-mode))
 ;; makefile
@@ -43,9 +40,6 @@
 ;; }}
 
 (define-key global-map (kbd "RET") 'newline-and-indent)
-
-;; M-x without meta
-(global-set-key (kbd "C-x C-m") 'execute-extended-command)
 
 ;; {{ isearch
 ;; Use regex to search by default
@@ -65,7 +59,7 @@
               grep-highlight-matches t
               grep-scroll-output t
               indent-tabs-mode nil
-              line-spacing 0.2
+              line-spacing 0
               mouse-yank-at-point t
               set-mark-command-repeat-pop t
               tooltip-delay 1.5
@@ -134,9 +128,10 @@
 ;; {{ https://github.com/browse-kill-ring/browse-kill-ring
 (require 'browse-kill-ring)
 ;; no duplicates
-(setq browse-kill-ring-display-duplicates nil)
-;; preview is annoying
-(setq browse-kill-ring-show-preview nil)
+(setq browse-kill-ring-display-style 'one-line
+      browse-kill-ring-display-duplicates nil
+      ;; preview is annoying
+      browse-kill-ring-show-preview nil)
 (browse-kill-ring-default-keybindings)
 ;; hotkeys:
 ;; n/p => next/previous
@@ -216,13 +211,25 @@
 ;; }}
 
 
+;; smex or counsel-M-x?
+(defvar my-use-smex nil
+  "Use `smex' instead of `counsel-M-x' when press M-x.")
+(defun my-M-x ()
+  (interactive)
+  (if my-use-smex (smex)
+    ;; `counsel-M-x' will use `smex' to remember history
+    (counsel-M-x)))
+(global-set-key (kbd "M-x") 'my-M-x)
+(global-set-key (kbd "C-x C-m") 'my-M-x)
+
 (defun compilation-finish-hide-buffer-on-success (buf str)
   "Could be reused by other major-mode after compilation."
   (if (string-match "exited abnormally" str)
       ;;there were errors
       (message "compilation errors, press C-x ` to visit")
     ;;no errors, make the compilation window go away in 0.5 seconds
-    (when (string-match "*compilation*" (buffer-name buf))
+    (when (and (buffer-name buf)
+               (string-match "*compilation*" (buffer-name buf)))
       ;; @see http://emacswiki.org/emacs/ModeCompile#toc2
       (bury-buffer "*compilation*")
       (winner-undo)
@@ -594,11 +601,10 @@ If step is -1, go backward."
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
-
 ;; {{ string-edit-mode
 (defun string-edit-at-point-hook-setup ()
   (let ((major-mode-list (remove major-mode '(web-mode js2-mode js-mode css-mode emacs-lisp-mode)))
-        (str (buffer-substring-no-properties (point-min) (point-max))))
+        (str (my-buffer-str)))
     ;; (ivy-read "directories:" collection :action 'dired)
     ;; (message "original=%s" (se/find-original))
     ;; (message "major-mode-list=%s major-mode=%s" major-mode-list major-mode)
@@ -727,6 +733,19 @@ If step is -1, go backward."
 ;; {{ csv
 (add-auto-mode 'csv-mode "\\.[Cc][Ss][Vv]\\'")
 (setq csv-separators '("," ";" "|" " "))
+;; }}
+
+;; {{ regular expression tools
+(defun my-create-regex-from-kill-ring (&optional n)
+  "Create extended regex from first N items of `kill-ring'."
+  (interactive "p")
+  (when (and kill-ring (> (length kill-ring) 0))
+    (if (> n (length kill-ring))
+        (setq n (length kill-ring)))
+    (let* ((rlt (mapconcat 'identity (subseq kill-ring 0 n) "|")))
+      (setq rlt (replace-regexp-in-string "(" "\\\\(" rlt))
+      (copy-yank-str rlt)
+      (message (format "%s => kill-ring&clipboard" rlt)))))
 ;; }}
 
 (provide 'init-misc)
