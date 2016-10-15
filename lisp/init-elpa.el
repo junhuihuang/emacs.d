@@ -53,7 +53,8 @@ But you may use safer HTTPS instead.")
     w3m
     erlang
     workgroups2
-    company-c-headers)
+    company-c-headers
+    sml-mode)
   "Don't install any Melpa packages except these packages")
 
 ;; We include the org repository for completeness, but don't use it.
@@ -62,12 +63,14 @@ But you may use safer HTTPS instead.")
 (if melpa-use-https-repo
     (setq package-archives
           '(;; uncomment below line if you need use GNU ELPA
-            ;; ("gnu" . "https://elpa.gnu.org/packages/")
+            ;;; stevens
+            ("gnu" . "https://elpa.gnu.org/packages/")
             ("melpa" . "https://melpa.org/packages/")
             ("melpa-stable" . "https://stable.melpa.org/packages/")))
   (setq package-archives
         '(;; uncomment below line if you need use GNU ELPA
-          ;; ("gnu" . "http://elpa.gnu.org/packages/")
+          ;;; stevens
+          ("gnu" . "http://elpa.gnu.org/packages/")
           ("melpa" . "http://melpa.org/packages/")
           ("melpa-stable" . "http://stable.melpa.org/packages/")))
   )
@@ -252,5 +255,6 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'helm)
 (require-package 'helm-swoop)
 (require-package 'hydra)
+(require-package 'sml-mode)
 
 (provide 'init-elpa)
