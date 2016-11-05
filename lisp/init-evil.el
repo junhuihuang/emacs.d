@@ -61,10 +61,11 @@
 (global-evil-visualstar-mode t)
 ;; }}
 
-;; ffip-diff-mode evil setup
+
+;; ffip-diff-mode (read only) evil setup
 (defun ffip-diff-mode-hook-setup ()
-    (evil-local-set-key 'normal "p" 'diff-hunk-prev)
-    (evil-local-set-key 'normal "n" 'diff-hunk-next)
+    (evil-local-set-key 'normal "K" 'diff-hunk-prev)
+    (evil-local-set-key 'normal "J" 'diff-hunk-next)
     (evil-local-set-key 'normal "P" 'diff-file-prev)
     (evil-local-set-key 'normal "N" 'diff-file-next)
     (evil-local-set-key 'normal "q" 'ffip-diff-quit)
@@ -243,7 +244,7 @@ If the character before and after CH is space or tab, CH is NOT slash"
 
 ;; {{ https://github.com/syl20bnr/evil-escape
 (require 'evil-escape)
-(setq-default evil-escape-delay 0.2)
+(setq-default evil-escape-delay 0.5)
 (setq evil-escape-excluded-major-modes '(dired-mode))
 (setq-default evil-escape-key-sequence "kj")
 (evil-escape-mode 1)

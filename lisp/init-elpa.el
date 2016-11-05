@@ -13,7 +13,6 @@ But you may use safer HTTPS instead.")
     color-theme
     ivy
     counsel
-    swiper
     wgrep
     robe
     groovy-mode
@@ -66,14 +65,14 @@ But you may use safer HTTPS instead.")
 (if melpa-use-https-repo
     (setq package-archives
           '(;; uncomment below line if you need use GNU ELPA
-            ;;; stevens
-            ("gnu" . "https://elpa.gnu.org/packages/")
+            ;; ("gnu" . "https://elpa.gnu.org/packages/")
+            ("my-js2-mode" . "https://raw.githubusercontent.com/redguardtoo/js2-mode/release/")
             ("melpa" . "https://melpa.org/packages/")
             ("melpa-stable" . "https://stable.melpa.org/packages/")))
   (setq package-archives
         '(;; uncomment below line if you need use GNU ELPA
-          ;;; stevens
-          ("gnu" . "http://elpa.gnu.org/packages/")
+          ;; ("gnu" . "http://elpa.gnu.org/packages/")
+          ("my-js2-mode" . "http://raw.githubusercontent.com/redguardtoo/js2-mode/release/")
           ("melpa" . "http://melpa.org/packages/")
           ("melpa-stable" . "http://stable.melpa.org/packages/")))
   )
