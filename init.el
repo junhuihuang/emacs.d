@@ -124,6 +124,7 @@
   (require 'init-httpd)
   (require 'init-highlight-windows)
   (require 'init-blog)
+  (require 'init-grep)
 
   ;; projectile costs 7% startup time
 
