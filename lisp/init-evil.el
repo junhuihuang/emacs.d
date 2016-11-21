@@ -509,6 +509,7 @@ If the character before and after CH is space or tab, CH is NOT slash"
        "hk" 'describe-key
        "hv" 'describe-variable
        "gt" 'ggtags-find-tag-dwim
+       "gd" 'ggtags-find-definition
        "gr" 'ggtags-find-reference
        "gp" 'ggtags-prev-mark ; stevens
        "fb" 'flyspell-buffer
