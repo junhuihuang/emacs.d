@@ -522,9 +522,6 @@ See \"Reusing passwords for several connections\" from INFO.
 (window-numbering-mode 1)
 ;; }}
 
-;; for avy-goto-char-timer
-;; (setq avy-timeout-seconds 0.2)
-
 ;; {{ avy, jump between texts, like easymotion in vim
 ;; @see http://emacsredux.com/blog/2015/07/19/ace-jump-mode-is-dead-long-live-avy/ for more tips
 ;; emacs key binding, copied from avy website
@@ -777,6 +774,71 @@ If step is -1, go backward."
   "Duplicate current line below"
   (interactive)
   (duplicate-line-above t))
+
+;; {{ perforce utilities
+(defvar p4-file-to-url '("" "")
+  "(car p4-file-to-url) is the original file prefix
+(cadr p4-file-to-url) is the url prefix")
+
+(defun p4-generate-cmd (opts)
+  (format "p4 %s %s"
+          opts
+          (replace-regexp-in-string (car p4-file-to-url)
+                                    (cadr p4-file-to-url)
+                                    buffer-file-name)))
+(defun p4edit ()
+  "p4 edit current file."
+  (interactive)
+  (shell-command (p4-generate-cmd "edit"))
+  (read-only-mode -1))
+
+(defun p4submit (&optional file-opened)
+  "p4 submit current file.
+If FILE-OPENED, current file is still opened."
+  (interactive "P")
+  (let* ((msg (read-string "Say (ENTER to abort):"))
+         (open-opts (if file-opened "-f leaveunchanged+reopen -r" ""))
+         (full-opts (format "submit -d '%s' %s" msg open-opts)))
+    (message "(p4-generate-cmd full-opts)=%s" (p4-generate-cmd full-opts))
+    (if (string= "" msg)
+        (message "Abort submit.")
+      (shell-command (p4-generate-cmd full-opts))
+      (unless file-opened (read-only-mode 1))
+      (message (format "%s submitted."
+                       (file-name-nondirectory buffer-file-name))))))
+
+(defun p4revert ()
+  "p4 revert current file."
+  (interactive)
+  (shell-command (p4-generate-cmd "revert"))
+  (read-only-mode 1))
+;; }}
+
+(defun my-get-total-hours ()
+  (interactive)
+  (let* ((str (if (region-active-p) (my-selected-str)
+                (my-buffer-str)))
+         (total-hours 0)
+         (lines (split-string str "\n")))
+    (dolist (l lines)
+      (if (string-match " \\([0-9][0-9.]*\\)h[ \t]*$" l)
+          (setq total-hours (+ total-hours (string-to-number (match-string 1 l))))))
+    (message "total-hours=%s" total-hours)))
+
+;; {{ emmet (auto-complete html tags)
+;; @see https://github.com/rooney/zencoding for original tutorial
+;; @see https://github.com/smihica/emmet for new tutorial
+;; C-j or C-return to expand the line
+(add-hook 'html-mode-hook 'emmet-mode)
+(add-hook 'sgml-mode-hook 'emmet-mode)
+(add-hook 'web-mode-hook 'emmet-mode)
+(add-hook 'css-mode-hook  'emmet-mode)
+(add-hook 'rjsx-mode-hook  'emmet-mode)
+;; }}
+
+(autoload 'verilog-mode "verilog-mode" "Verilog mode" t )
+(add-to-list 'auto-mode-alist '("\\.[ds]?vh?\\'" . verilog-mode))
+
 
 (provide 'init-misc)
 
