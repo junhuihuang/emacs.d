@@ -522,6 +522,9 @@ See \"Reusing passwords for several connections\" from INFO.
 (window-numbering-mode 1)
 ;; }}
 
+;; for avy-goto-char-timer
+;; (setq avy-timeout-seconds 0.2)
+
 ;; {{ avy, jump between texts, like easymotion in vim
 ;; @see http://emacsredux.com/blog/2015/07/19/ace-jump-mode-is-dead-long-live-avy/ for more tips
 ;; emacs key binding, copied from avy website
@@ -529,8 +532,8 @@ See \"Reusing passwords for several connections\" from INFO.
 (eval-after-load "evil"
   '(progn
      ;; press "d " to delete to the word
-     (define-key evil-motion-state-map (kbd "SPC") #'avy-goto-char-2)
-     (define-key evil-normal-state-map (kbd "SPC") 'avy-goto-char-2)))
+     (define-key evil-motion-state-map (kbd "SPC") #'avy-goto-char-timer)
+     (define-key evil-normal-state-map (kbd "SPC") 'avy-goto-char-timer)))
 
 ;; dired
 (eval-after-load "dired"
@@ -756,6 +759,24 @@ If step is -1, go backward."
       (copy-yank-str rlt)
       (message (format "%s => kill-ring&clipboard" rlt)))))
 ;; }}
+
+(defun duplicate-line-above (&optional reverse)
+  "Duplicate current line above."
+  (interactive)
+  (let ((origianl-column (current-column))
+        line-content)
+    (setq line-content (buffer-substring (line-beginning-position) (line-end-position)))
+    (beginning-of-line)
+    (and reverse (forward-line +1))
+    (newline +1)
+    (forward-line -1)
+    (insert line-content)
+    (move-to-column origianl-column t)))
+
+(defun duplicate-line-below ()
+  "Duplicate current line below"
+  (interactive)
+  (duplicate-line-above t))
 
 (provide 'init-misc)
 
