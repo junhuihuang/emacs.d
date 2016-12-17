@@ -1,6 +1,27 @@
 ;; some cool org tricks
 ;; @see http://emacs.stackexchange.com/questions/13820/inline-verbatim-and-code-with-quotes-in-org-mode
 
+;; https://emacs-china.org/t/org-mode/597/5
+;; 必须在 (require 'org) 之前
+(setq org-emphasis-regexp-components
+      ;; markup 记号前后允许中文
+      (list (concat " \t('\"{"            "[:nonascii:]")
+            (concat "- \t.,:!?;'\")}\\["  "[:nonascii:]")
+            " \t\r\n,\"'"
+            "."
+            1))
+
+(with-eval-after-load 'org
+  (setq org-match-substring-regexp
+        (concat
+         ;; 限制上标和下标的匹配范围，org 中对其的介绍见：(org) Subscripts and superscripts
+         "\\([0-9a-zA-Zα-γΑ-Ω]\\)\\([_^]\\)\\("
+         "\\(?:" (org-create-multibrace-regexp "{" "}" org-match-sexp-depth) "\\)"
+         "\\|"
+         "\\(?:" (org-create-multibrace-regexp "(" ")" org-match-sexp-depth) "\\)"
+         "\\|"
+         "\\(?:\\*\\|[+-]?[[:alnum:].,\\]*[[:alnum:]]\\)\\)")))
+
 ;; {{ NO spell check for embedded snippets
 (defun org-mode-is-code-snippet ()
   (let (rlt
