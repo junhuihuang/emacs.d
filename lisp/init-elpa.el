@@ -1,6 +1,6 @@
 (require 'package)
 
-;; You can set it to `t' to use safer HTTPS to download packages
+;; Set it to `t' to use safer HTTPS to download packages
 (defvar melpa-use-https-repo nil
   "By default, HTTP is used to download packages.
 But you may use safer HTTPS instead.")
@@ -12,7 +12,7 @@ But you may use safer HTTPS instead.")
     bbdb
     color-theme
     ivy
-    rjsx-mode
+    js-doc
     counsel
     wgrep
     robe
@@ -62,12 +62,12 @@ But you may use safer HTTPS instead.")
 
 ;; We include the org repository for completeness, but don't use it.
 ;; Lock org-mode temporarily:
-;; (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
 (if melpa-use-https-repo
     (setq package-archives
           '(;; uncomment below line if you need use GNU ELPA
             ;; stevenswong, need gnu for sml-mode
             ("gnu" . "https://elpa.gnu.org/packages/")
+            ;; ("org" . "http://orgmode.org/elpa/") ; latest org-mode
             ("my-js2-mode" . "https://raw.githubusercontent.com/redguardtoo/js2-mode/release/")
             ("melpa" . "https://melpa.org/packages/")
             ("melpa-stable" . "https://stable.melpa.org/packages/")))
@@ -75,10 +75,10 @@ But you may use safer HTTPS instead.")
         '(;; uncomment below line if you need use GNU ELPA
           ;; stevenswong, need gnu for sml-mode
           ("gnu" . "http://elpa.gnu.org/packages/")
+          ;; ("org" . "http://orgmode.org/elpa/") ; latest org-mode
           ("my-js2-mode" . "http://raw.githubusercontent.com/redguardtoo/js2-mode/release/")
           ("melpa" . "http://melpa.org/packages/")
-          ("melpa-stable" . "http://stable.melpa.org/packages/")))
-  )
+          ("melpa-stable" . "http://stable.melpa.org/packages/"))))
 
 
 ;; Un-comment below line if your extract https://github.com/redguardtoo/myelpa/archive/master.zip into ~/myelpa/
@@ -139,7 +139,10 @@ ARCHIVE is the string name of the package archive.")
 (setq package-filter-function
       (lambda (package version archive)
         (or (not (string-equal archive "melpa"))
-            (memq package melpa-include-packages)
+            (and (memq package melpa-include-packages)
+                 ;; this version of ivy is buggy
+                 (not (and (string= package "ivy")
+                           (equal version '(20161213 719)))))
             ;; use all color themes
             (string-match (format "%s" package) "-theme"))))
 
@@ -161,7 +164,7 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'avy)
 (require-package 'auto-yasnippet)
 (require-package 'ace-link)
-(require-package 'expand-region) ;; I prefer stable version
+(require-package 'expand-region) ; I prefer stable version
 (require-package 'fringe-helper)
 (require-package 'haskell-mode)
 (require-package 'gitignore-mode)
@@ -193,8 +196,6 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'rainbow-delimiters)
 (require-package 'textile-mode)
 (require-package 'protobuf-mode)
-(require-package 'coffee-mode)
-(require-package 'flymake-coffee)
 (require-package 'crontab-mode)
 (require-package 'dsvn)
 (require-package 'git-timemachine)
@@ -237,8 +238,10 @@ ARCHIVE is the string name of the package archive.")
 ;; C-x r l to list bookmarks
 (require-package 'bookmark+)
 (require-package 'multi-term)
+(require-package 'js-doc)
 (require-package 'js2-mode)
-(require-package 'rjsx-mode)
+(unless *emacs24old*
+  (require-package 'rjsx-mode))
 (require-package 's)
 ;; js2-refactor requires js2, dash, s, multiple-cursors, yasnippet
 ;; I don't use multiple-cursors, but js2-refactor requires it
@@ -257,9 +260,9 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'flx-ido)
 (require-package 'neotree)
 (require-package 'define-word)
-(require-package 'quack) ;; for scheme
 (require-package 'helm)
 (require-package 'helm-swoop)
+(require-package 'quack) ; for scheme
 (require-package 'hydra)
 (require-package 'sml-mode)
 
