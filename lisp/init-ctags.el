@@ -17,12 +17,6 @@
 ;; }}
 
 ;; stevens
-;; http://blog.binchen.org/posts/how-to-use-ctags-in-emacs-effectively-3.html
-(if (file-exists-p (expand-file-name "~/bemetoy_svn/BemeNew/poppy/BemetoyServer"))
-(setq tags-table-list '("~/bemetoy_svn/BemeNew/poppy/BemetoyServer/common/TAGS" "~/bemetoy_svn/BemeNew/poppy/common/TAGS" "~/bemetoy_svn/BemeNew/poppy/BemetoyServer/proto/TAGS")))
-
-
-;; stevens
 ;; https://www.emacswiki.org/emacs/EmacsTags#toc2
 ;;; View tags other window
 (defun view-tag-other-window (tagname &optional next-p regexp-p)
