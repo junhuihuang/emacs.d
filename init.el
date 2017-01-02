@@ -124,6 +124,7 @@
   (require 'init-highlight-windows)
   (require 'init-blog)
   (require 'init-grep)
+  (require 'init-graphviz)
 
   ;; projectile costs 7% startup time
 

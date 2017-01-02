@@ -22,6 +22,11 @@
          "\\|"
          "\\(?:\\*\\|[+-]?[[:alnum:].,\\]*[[:alnum:]]\\)\\)")))
 
+;; http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-dot.html
+(org-babel-do-load-languages
+   'org-babel-load-languages
+    '((dot . t))) ; this line activates dot
+
 ;; {{ NO spell check for embedded snippets
 (defun org-mode-is-code-snippet ()
   (let (rlt
