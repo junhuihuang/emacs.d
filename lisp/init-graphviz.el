@@ -1,6 +1,7 @@
 (require 'graphviz-dot-mode)
-;; (setq graphviz-dot-indent-width 4)
+(setq graphviz-dot-indent-width 4)
 (add-to-list 'auto-mode-alist '("\\.dot$" . graphviz-dot-mode))
+(add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
 ;; (add-hook 'graphviz-dot-mode-hook 'my/common-programming-hook)
 (setq graphviz-dot-mode t)
 (provide 'init-graphviz)
