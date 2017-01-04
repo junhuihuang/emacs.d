@@ -58,7 +58,9 @@ But you may use safer HTTPS instead.")
     workgroups2
     company-c-headers
     sml-mode
-    graphviz-dot-mode)
+    graphviz-dot-mode
+    clang-format
+    flymake-google-cpplint)
   "Don't install any Melpa packages except these packages")
 
 ;; We include the org repository for completeness, but don't use it.
@@ -267,5 +269,7 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'hydra)
 (require-package 'sml-mode)
 (require-package 'graphviz-dot-mode)
+(require-package 'clang-format)
+(require-package 'flymake-google-cpplint)
 
 (provide 'init-elpa)

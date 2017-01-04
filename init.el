@@ -125,6 +125,7 @@
   (require 'init-blog)
   (require 'init-grep)
   (require 'init-graphviz)
+  (require 'init-clang-format)
 
   ;; projectile costs 7% startup time
 

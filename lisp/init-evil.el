@@ -567,6 +567,7 @@ If the character before and after CH is space or tab, CH is NOT slash"
        "wf" 'popup-which-function
        ";" 'evil-repeat-find-char-reverse
        "rg" 'rgrep
+       "de" 'flymake-popup-current-error-menu
        )
 ;; }}
 
