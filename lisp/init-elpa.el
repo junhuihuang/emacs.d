@@ -60,7 +60,8 @@ But you may use safer HTTPS instead.")
     sml-mode
     graphviz-dot-mode
     clang-format
-    flymake-google-cpplint)
+    flymake-google-cpplint
+    etags-table)
   "Don't install any Melpa packages except these packages")
 
 ;; We include the org repository for completeness, but don't use it.
@@ -271,5 +272,6 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'graphviz-dot-mode)
 (require-package 'clang-format)
 (require-package 'flymake-google-cpplint)
+(require-package 'etags-table)
 
 (provide 'init-elpa)
