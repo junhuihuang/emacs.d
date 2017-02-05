@@ -35,7 +35,4 @@
     (recenter 0)
     (select-window window)))
 
-(require 'etags-table)
-(setq etags-table-search-up-depth 10)
-
 (provide 'init-ctags)
