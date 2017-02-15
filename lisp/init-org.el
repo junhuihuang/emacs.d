@@ -25,7 +25,10 @@
 ;; http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-dot.html
 (org-babel-do-load-languages
    'org-babel-load-languages
-    '((dot . t))) ; this line activates dot
+   '(
+     (dot . t) ; this line activates dot
+     (python . t)
+     ))
 
 ;; {{ NO spell check for embedded snippets
 (defun org-mode-is-code-snippet ()
