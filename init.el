@@ -48,8 +48,8 @@
   (require 'init-modeline)
   (require 'cl-lib)
   (require 'init-compat)
-  (require 'init-utils)
   (require 'init-site-lisp) ;; Must come before elpa, as it may provide package.el
+  (require 'init-utils)
 
   ;; Windows configuration, assuming that cygwin is installed at "c:/cygwin"
   ;; (condition-case nil
@@ -146,7 +146,6 @@
                                init-hs-minor-mode
                                init-writting
                                init-pomodoro
-                               init-emacspeak
                                init-artbollocks-mode
                                init-semantic))
   (idle-require-mode 1) ;; starts loading
