@@ -11,6 +11,9 @@
     ;; emacs 24.4 only
     (setq electric-indent-chars (delq ?: electric-indent-chars))))
 
+;; default remove indent highlight, enable by call `highlight-indentation-mode` manually
+(setq elpy-modules (remove 'elpy-module-highlight-indentation elpy-modules))
+
 (add-hook 'python-mode-hook 'python-mode-hook-setup)
 
 (provide 'init-python-mode)
