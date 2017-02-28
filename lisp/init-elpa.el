@@ -58,6 +58,8 @@ But you may use safer HTTPS instead.")
     workgroups2
     company-c-headers
     sml-mode
+    ob-sml
+    ob-go
     graphviz-dot-mode
     clang-format
     flymake-google-cpplint)
@@ -263,6 +265,8 @@ But you may use safer HTTPS instead.")
 (require-package 'quack) ; for scheme
 (require-package 'hydra)
 (require-package 'sml-mode)
+(require-package 'ob-sml)
+(require-package 'ob-go)
 (require-package 'graphviz-dot-mode)
 (require-package 'clang-format)
 (require-package 'flymake-google-cpplint)

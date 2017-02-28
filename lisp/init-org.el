@@ -28,6 +28,8 @@
    '(
      (dot . t) ; this line activates dot
      (python . t)
+     (sml . t)
+     (go . t)
      ))
 
 ;; {{ NO spell check for embedded snippets
