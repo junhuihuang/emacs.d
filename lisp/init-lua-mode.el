@@ -7,9 +7,10 @@
                                            ("Variable" "^ *local +\\([^ ]+\\).*$" 1)))
     (flymake-lua-load)))
 
+;; stevens disable
 ;; @see http://lua-users.org/wiki/LuaStyleGuide
 ;; indent 2 spaces by default
-(setq-default lua-indent-level 2)
+;; (setq-default lua-indent-level 2)
 
 (add-hook 'lua-mode-hook 'my-lua-mode-setup)
 (provide 'init-lua-mode)
