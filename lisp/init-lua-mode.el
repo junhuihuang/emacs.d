@@ -12,5 +12,7 @@
 ;; indent 2 spaces by default
 ;; (setq-default lua-indent-level 2)
 
+(eval-after-load 'flymake '(require 'flymake-cursor))
+
 (add-hook 'lua-mode-hook 'my-lua-mode-setup)
 (provide 'init-lua-mode)

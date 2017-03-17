@@ -11,6 +11,9 @@
               js2-enter-indents-newline nil
               js2-bounce-indent-p t)
 
+;; add by stevenswong
+(setq js2-basic-offset 2)
+
 (setq javascript-common-imenu-regex-list
       '(("Controller" "[. \t]controller([ \t]*['\"]\\([^'\"]+\\)" 1)
         ("Controller" "[. \t]controllerAs:[ \t]*['\"]\\([^'\"]+\\)" 1)
