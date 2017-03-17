@@ -9,10 +9,12 @@
 (add-to-list 'auto-mode-alist '("\\.aspell\\.en\\.pws\\'" . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.meta\\'" . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.?muttrc\\'" . conf-mode))
-(add-to-list 'auto-mode-alist '("\\.ctags\\'" . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.mailcap\\'" . conf-mode))
 ;; }}
 
+
+(add-to-list 'auto-mode-alist '("TAGS\\'" . text-mode))
+(add-to-list 'auto-mode-alist '("\\.ctags\\'" . text-mode))
 
 ;; {{ auto-yasnippet
 ;; Use C-q instead tab to complete snippet
@@ -448,6 +450,8 @@ See \"Reusing passwords for several connections\" from INFO.
       recentf-exclude '("/tmp/"
                         "/ssh:"
                         "/sudo:"
+                        "recentf$"
+                        "company-statistics-cache\\.el$"
                         ;; ctags
                         "/TAGS$"
                         ;; global
@@ -459,6 +463,8 @@ See \"Reusing passwords for several connections\" from INFO.
                         "\\.mp[34]$"
                         "\\.avi$"
                         "\\.pdf$"
+                        "\\.docx?$"
+                        "\\.xlsx?$"
                         ;; sub-titles
                         "\\.sub$"
                         "\\.srt$"
