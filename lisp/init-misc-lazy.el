@@ -480,6 +480,8 @@ Including indent-buffer, which should not be called automatically on save."
    (savehist-mode 1)))
 ;; }}
 
+(icy-mode 1)
+
 (provide 'init-misc-lazy)
 ;;; init-misc-lazy.el ends here
 
