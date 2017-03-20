@@ -416,8 +416,9 @@ If the character before and after CH is space or tab, CH is NOT slash"
        "yy" 'counsel-browse-kill-ring
        "gf" 'counsel-git-find-file
        "gc" 'counsel-git-find-file-committed-with-line-at-point
+       "gg" 'counsel-git-grep
        "gl" 'counsel-git-grep-yank-line
-       "gg" 'counsel-git-grep-in-project ; quickest grep should be easy to press
+       ;; "gg" 'counsel-git-grep-in-project ; quickest grep should be easy to press
        "ga" 'counsel-git-grep-by-author
        "gm" 'counsel-git-find-my-file
        "gs" 'ffip-show-diff ; find-file-in-project 5.0+
@@ -458,7 +459,9 @@ If the character before and after CH is space or tab, CH is NOT slash"
        "cxi" 'org-clock-in ; `C-c C-x C-i'
        "cxo" 'org-clock-out ; `C-c C-x C-o'
        "cxr" 'org-clock-report ; `C-c C-x C-r'
+       "rg" 'rgrep
        "qq" 'my-grep
+       "qp" 'my-grep-at-point
        "hr" 'helm-recentf
        "ho" 'helm-swoop
        "he" 'helm-resume
@@ -568,7 +571,6 @@ If the character before and after CH is space or tab, CH is NOT slash"
        "ycr" 'my-yas-reload-all
        "wf" 'popup-which-function
        ";" 'evil-repeat-find-char-reverse
-       "rg" 'rgrep
        "de" 'flymake-popup-current-error-menu
        )
 ;; }}

@@ -437,6 +437,21 @@ Extended regex is used, like (pattern1|pattern2)."
               :action `(lambda (line)
                          (let* ((default-directory (my-root-dir)))
                            (counsel--open-grepped-file line))))))
+
+(defun my-grep-at-point ()
+  "Grep at project root directory or current directory.
+If ag (the_silver_searcher) exists, use ag.
+Extended regex is used, like (pattern1|pattern2)."
+  (interactive)
+  (let* ((keyword (thing-at-point 'symbol))
+         (default-directory (my-root-dir))
+         (collection (split-string (shell-command-to-string (my-grep-cli keyword)) "[\r\n]+" t)))
+
+    (ivy-read (format "matching \"%s\" at %s:" keyword (my-root-dir))
+              collection
+              :action `(lambda (line)
+                         (let* ((default-directory (my-root-dir)))
+                           (counsel--open-grepped-file line))))))
 ;; }}
 
 (defun counsel-browse-kill-ring (&optional n)
