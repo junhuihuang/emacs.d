@@ -15,7 +15,8 @@
 (setq js2-basic-offset 2)
 
 (setq javascript-common-imenu-regex-list
-      '(("Controller" "[. \t]controller([ \t]*['\"]\\([^'\"]+\\)" 1)
+      '(("Attribute" " \\([a-z][a-zA-Z0-9-_]+\\) *= *\{[a-zA-Z0-9_.(), ]+\}\\( \\|$\\)" 1)
+        ("Controller" "[. \t]controller([ \t]*['\"]\\([^'\"]+\\)" 1)
         ("Controller" "[. \t]controllerAs:[ \t]*['\"]\\([^'\"]+\\)" 1)
         ("Filter" "[. \t]filter([ \t]*['\"]\\([^'\"]+\\)" 1)
         ("State" "[. \t]state[(:][ \t]*['\"]\\([^'\"]+\\)" 1)
@@ -340,6 +341,18 @@ INDENT-SIZE decide the indentation level.
   (js-clear)
   (js-send-buffer))
 ;; }}
+
+(defadvice js-jsx-indent-line (after js-jsx-indent-line-after-hack activate)
+  "Workaround sgml-mode and follow airbnb component style."
+  (let* ((cur-line (buffer-substring-no-properties
+                    (line-beginning-position)
+                    (line-end-position))))
+    (if (string-match "^\\( +\\)\/?> *$" cur-line)
+      (let* ((empty-spaces (match-string 1 cur-line)))
+        (replace-regexp empty-spaces
+                        (make-string (- (length empty-spaces) sgml-basic-offset) 32)
+                        nil
+                        (line-beginning-position) (line-end-position))))))
 
 (setq-default js2-additional-externs
               '("$"

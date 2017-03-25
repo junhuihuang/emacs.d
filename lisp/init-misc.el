@@ -986,6 +986,7 @@ If FILE-OPENED, current file is still opened."
         (y-or-n-p "The message suggests that you may want to attach something, but no attachment is found. Send anyway?")
       (error "It seems that an attachment is needed, but none was found. Aborting sending."))))
 (add-hook 'message-send-hook 'my-message-pre-send-check-attachment)
+
 ;; }}
 
 ;;{{
@@ -1007,6 +1008,14 @@ If FILE-OPENED, current file is still opened."
 
 (add-hook 'minibuffer-setup-hook 'my-minibuffer-setup-hook)
 ;; }}
+
+(defun minibuffer-inactive-mode-hook-setup ()
+  ;; make `try-expand-dabbrev' from `hippie-expand' work in mini-buffer
+  ;; @see `he-dabbrev-beg', so we need re-define syntax for '/'
+  (set-syntax-table (let* ((table (make-syntax-table)))
+                      (modify-syntax-entry ?/ "." table)
+                      table)))
+(add-hook 'minibuffer-inactive-mode-hook 'minibuffer-inactive-mode-hook-setup)
 
 (provide 'init-misc)
 
