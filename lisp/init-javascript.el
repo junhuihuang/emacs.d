@@ -12,7 +12,15 @@
               js2-bounce-indent-p t)
 
 ;; add by stevenswong
-(setq js2-basic-offset 2)
+;; http://blog.binchen.org/posts/easy-indentation-setup-in-emacs-for-web-development.html
+;; {
+(setq coffee-tab-width 2) ; coffeescript
+(setq javascript-indent-level 2) ; javascript-mode
+(setq js-indent-level 2) ; js-mode
+(setq js2-basic-offset 2) ; js2-mode, in latest js2-mode, it's alias of js-indent-level
+;; }
+(setq js2-strict-missing-semi-warning nil)
+
 
 (setq javascript-common-imenu-regex-list
       '(("Attribute" " \\([a-z][a-zA-Z0-9-_]+\\) *= *\{[a-zA-Z0-9_.(), ]+\}\\( \\|$\\)" 1)

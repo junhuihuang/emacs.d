@@ -23,6 +23,13 @@
 (add-to-list 'auto-mode-alist '("\\.xml?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.\\(jst\\|ejs\\|rhtml\\)\\(\\.erb\\)?\\'"  . web-mode)) ; ruby
 
+;; add by stevenswong
+;; http://blog.binchen.org/posts/easy-indentation-setup-in-emacs-for-web-development.html
+(setq web-mode-markup-indent-offset 2) ; web-mode, html tag in html file
+(setq web-mode-css-indent-offset 2) ; web-mode, css in html file
+(setq web-mode-code-indent-offset 2) ; web-mode, js code in html file
+(setq css-indent-offset 2) ; css-mode
+
 (defun flymake-html-init ()
        (let* ((temp-file (flymake-init-create-temp-buffer-copy
                           'flymake-create-temp-inplace))
