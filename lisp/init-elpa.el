@@ -62,7 +62,10 @@ But you may use safer HTTPS instead.")
     ob-go
     graphviz-dot-mode
     clang-format
-    flymake-google-cpplint)
+    flymake-google-cpplint
+    markdown-mode
+    markdown-toc
+    )
   "Don't install any Melpa packages except these packages")
 
 ;; We include the org repository for completeness, but don't use it.
@@ -272,6 +275,7 @@ But you may use safer HTTPS instead.")
 (require-package 'graphviz-dot-mode)
 (require-package 'clang-format)
 (require-package 'flymake-google-cpplint)
+(require-package 'markdown-toc)
 (require-package 'chinese-pyim)
 
 (provide 'init-elpa)
