@@ -9,7 +9,10 @@
               js2-skip-preprocessor-directives t
               js2-strict-inconsistent-return-warning nil ; return <=> return null
               js2-enter-indents-newline nil
-              js2-bounce-indent-p t)
+              js2-bounce-indent-p t
+              ;; add by stevenswong
+              js2-strict-trailing-comma-warning nil
+              js2-strict-missing-semi-warning nil)
 
 ;; add by stevenswong
 ;; http://blog.binchen.org/posts/easy-indentation-setup-in-emacs-for-web-development.html
@@ -19,7 +22,7 @@
 (setq js-indent-level 2) ; js-mode
 (setq js2-basic-offset 2) ; js2-mode, in latest js2-mode, it's alias of js-indent-level
 ;; }
-(setq js2-strict-missing-semi-warning nil)
+
 
 
 (setq javascript-common-imenu-regex-list
